@@ -24,15 +24,16 @@ void Neuron::setBias(double val)
 
 void Neuron::setInputOutput(double* val)
 {
-	if (_dendrites.empty())
-	{
 		this->inOutValue = val;
-	}
-	else
-	{
-		val = this->inOutValue;
-	}
 }
+
+
+void Neuron::setSumActiv(SummationEnum _typSum, ActivationEnum _typActiv)
+{
+	this->typSum = _typSum;
+	this->typActiv = _typActiv;
+}
+
 
 double Neuron::getAxon()
 {
