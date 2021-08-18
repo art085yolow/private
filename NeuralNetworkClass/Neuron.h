@@ -8,7 +8,10 @@
 	{
 	public:
 		Neuron();
-		// Neuron(konstruktor z wartosciami wejsciowymi);
+		// Neuron(konstruktor z wartosciami wejsciowymi); // czy sa potrzebne?
+		// Neuron(double* in) 
+		// Neuron(std::vector<Neuron*> sunapseIn, SummationEnum typSum = SummationEnum::Suma, ActivationEnum typActiv = ActivationEnum::Sigm) 
+		// Neuron(std::vector<Neuron*> sunapseIn, double* out, SummationEnum typSum = SummationEnum::Suma, ActivationEnum typActiv = ActivationEnum::Sigm)
 		~Neuron();
 
 
@@ -37,7 +40,7 @@
 		double bias = 1.0;
 		
 		// wejscia neuronow - neuron wejsciowy i synapsa
-		std::vector<Synapse*> _dendrites;
+		std::vector<Synapse*> _dendrites; //aktualnie to tylko "double weight". rozwarzyc usuniecie synapse.h/cpp zastepujac poprostu double-list.<?>
 		std::vector<Neuron*> inputsDendrites;
 		
 		// wartosci do/z neuronu 

@@ -8,11 +8,6 @@
     -reczne odwołanie synaps i ich neuronow axon; update-process
 */
 
-
-
-
-
-
 int main()
 {
     std::cout << "Hello World!\n";

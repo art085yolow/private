@@ -7,7 +7,7 @@
 	{
 	public:
 		Layer();
-		~Layer() { };
+		~Layer();
 
 		void process();
 

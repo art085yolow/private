@@ -8,6 +8,24 @@ Neuron::~Neuron()
 {
 }
 
+void Neuron::process()
+{
+	if (_dendrites.empty())
+	{
+		this->axon = *inOutValue;
+	}
+	else {
+		summationFunctions();
+		activationFunction();
+
+		if (inOutValue != nullptr)
+		{
+			*inOutValue = this->axon;
+		}
+	}
+
+}
+
 void Neuron::activationFunction()
 {
 	switch (this->typActiv)
