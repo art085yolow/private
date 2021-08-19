@@ -40,7 +40,7 @@
 		double bias = 1.0;
 		
 		// wejscia neuronow - neuron wejsciowy i synapsa
-		std::vector<Synapse*> _dendrites; //aktualnie to tylko "double weight". rozwarzyc usuniecie synapse.h/cpp zastepujac poprostu double-list.<?>
+		std::vector<Synapse*> _dendrites; //aktualnie to tylko "double weight". rozwarzyc usuniecie synapse.h/cpp zastepujac poprostu double-list.<?><?>
 		std::vector<Neuron*> inputsDendrites;
 		
 		// wartosci do/z neuronu 
