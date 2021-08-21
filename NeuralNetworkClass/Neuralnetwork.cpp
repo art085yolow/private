@@ -1,14 +1,14 @@
 #include "Neuralnetwork.h"
 
 
-void NeuralNetwork::createLayersOfNeurons(std::vector<double> inputs, std::vector<double> outputs, unsigned int nrLayers, unsigned int nrNeuronsInLayer, SummationEnum typSum, ActivationEnum typActiv)
+void NeuralNetwork::createLayersOfNeurons(std::vector<double*> inputs, std::vector<double*> outputs, unsigned int nrLayers, unsigned int nrNeuronsInLayer, SummationEnum typSum, ActivationEnum typActiv)
 {
 	// first layer
 	NeuralNetworkLayers.push_back(new Layer);
 	
 	for (size_t i = 0, tt = inputs.size(); i < tt; i++)
 	{
-		NeuralNetworkLayers[0]->neuronsInLayer.push_back(new Neuron(&inputs[i]));
+		NeuralNetworkLayers[0]->neuronsInLayer.push_back(new Neuron(inputs[i]));
 	}
 
 	// hidden layers
@@ -26,8 +26,12 @@ void NeuralNetwork::createLayersOfNeurons(std::vector<double> inputs, std::vecto
 	size_t lastLayer = NeuralNetworkLayers.size() - 1;
 	for (size_t i = 0, tt = outputs.size(); i < tt; i++)
 	{
-		NeuralNetworkLayers[lastLayer]->neuronsInLayer.push_back(new Neuron(NeuralNetworkLayers[lastLayer - 1]->neuronsInLayer, &outputs[i], typSum, typActiv));
+		NeuralNetworkLayers[lastLayer]->neuronsInLayer.push_back(new Neuron(NeuralNetworkLayers[lastLayer - 1]->neuronsInLayer, outputs[i], typSum, typActiv));
 	}
+}
+
+NeuralNetwork::NeuralNetwork()
+{
 }
 
 void NeuralNetwork::process()
@@ -38,7 +42,7 @@ void NeuralNetwork::process()
 	}
 }
 
-void NeuralNetwork::setInputsOutputs(std::vector<double> inputs, std::vector<double> outputs)
+void NeuralNetwork::setInputsOutputs(std::vector<double*> inputs, std::vector<double*> outputs)
 {
 
 	if ((inputs.size() == NeuralNetworkLayers[0]->neuronsInLayer.size()) | (outputs.size()== NeuralNetworkLayers[NeuralNetworkLayers.size() - 1]->neuronsInLayer.size()))
@@ -46,12 +50,12 @@ void NeuralNetwork::setInputsOutputs(std::vector<double> inputs, std::vector<dou
 
 		for (size_t i = 0, tt = inputs.size(); i < tt; i++)
 		{
-			NeuralNetworkLayers[0]->neuronsInLayer[i]->setInputOutput(&inputs[i]);
+			NeuralNetworkLayers[0]->neuronsInLayer[i]->setInputOutput(inputs[i]);
 		}
 
 		for (size_t i = 0, tt = outputs.size(); i < tt; i++)
 		{
-			NeuralNetworkLayers[NeuralNetworkLayers.size()-1]->neuronsInLayer[i]->setInputOutput(&outputs[i]);
+			NeuralNetworkLayers[NeuralNetworkLayers.size()-1]->neuronsInLayer[i]->setInputOutput(outputs[i]);
 		}
 
 	}

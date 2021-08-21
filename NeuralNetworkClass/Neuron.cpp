@@ -38,7 +38,7 @@ void Neuron::process()
 
 		if (inOutValue != nullptr)
 		{
-			*inOutValue = this->axon;
+			*inOutValue = this->getAxon();
 		}
 	}
 
