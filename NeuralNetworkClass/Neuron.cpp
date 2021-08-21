@@ -4,6 +4,24 @@ Neuron::Neuron()
 {
 }
 
+Neuron::Neuron(double* in)
+{
+	this->setInputOutput(in);
+}
+
+Neuron::Neuron(std::vector<Neuron*> synapseIn, SummationEnum typSum, ActivationEnum typActiv)
+{
+	this->setSynapse(synapseIn);
+	this->setSumActiv(typSum, typActiv);
+}
+
+Neuron::Neuron(std::vector<Neuron*> synapseIn, double* out, SummationEnum typSum, ActivationEnum typActiv)
+{
+	this->setSynapse(synapseIn);
+	this->setInputOutput(out);
+	this->setSumActiv(typSum, typActiv);
+}
+
 Neuron::~Neuron()
 {
 }

@@ -9,9 +9,16 @@
 	public:
 		Neuron();
 		// Neuron(konstruktor z wartosciami wejsciowymi); // czy sa potrzebne?
-		// Neuron(double* in) 
-		// Neuron(std::vector<Neuron*> sunapseIn, SummationEnum typSum = SummationEnum::Suma, ActivationEnum typActiv = ActivationEnum::Sigm) 
-		// Neuron(std::vector<Neuron*> sunapseIn, double* out, SummationEnum typSum = SummationEnum::Suma, ActivationEnum typActiv = ActivationEnum::Sigm)
+
+		// Create Neuron with input value
+		Neuron(double* in);
+
+		// Create Neuron with last layer and set Summation and Activation
+		Neuron(std::vector<Neuron*> synapseIn, SummationEnum typSum = SummationEnum::Suma, ActivationEnum typActiv = ActivationEnum::Sigm);
+		
+		// Create Neuron in last layer with layer befor and set Summation and Activation
+		Neuron(std::vector<Neuron*> synapseIn, double* out, SummationEnum typSum = SummationEnum::Suma, ActivationEnum typActiv = ActivationEnum::Sigm);
+		
 		~Neuron();
 
 
