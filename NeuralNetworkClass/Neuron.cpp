@@ -44,6 +44,12 @@ void Neuron::process()
 
 }
 
+void Neuron::updateWeightBias(double costErr)
+{
+	this->setDerivatives(costErr);
+	this->derivativesCalculation();
+}
+
 void Neuron::activationFunction()
 {
 	switch (this->typActiv)
@@ -112,6 +118,17 @@ void Neuron::summationFunctions()
 	}
 }
 
+void Neuron::derivativesCalculation()
+{
+	for (size_t i = 0, tt = this->_dendrites.size(); i < tt; i++)
+	{
+		this->_dendrites[i]->setWeight(this->_dendrites[i]->getWeight() - this->inputsDendrites[i]->getAxon() * this->derivativesError);
+	}
+	this->setBias(this->getBias() - this->derivativesError);
+
+	this->derivativesError = 0.0;
+}
+
 void Neuron::setSynapse(std::vector<Neuron*> synapseIn)
 {
 	for (size_t i = 0, tt = synapseIn.size(); i < tt; i++) {
@@ -136,6 +153,19 @@ void Neuron::setSumActiv(SummationEnum _typSum, ActivationEnum _typActiv)
 {
 	this->typSum = _typSum;
 	this->typActiv = _typActiv;
+}
+
+void Neuron::setDerivatives(double cost)
+{
+	this->derivativesError += cost;
+	
+	if (!this->inputsDendrites.empty())
+	{
+		for (size_t i = 0, tt = this->inputsDendrites.size(); i < tt; i++)
+		{
+			this->inputsDendrites[i]->setDerivatives(this->derivativesError * this->_dendrites[i]->getWeight());
+		}
+	}
 }
 
 

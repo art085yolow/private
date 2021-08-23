@@ -21,7 +21,13 @@
 
 		void setInputsOutputs(std::vector<double*> inputs, std::vector<double*> outputs);
 
+
+		// lista bledu dla warstwy output do obliczen -- znalesc i zrozumiec!
+
 	private:
 		std::vector<Layer*> NeuralNetworkLayers; //obejmuje In Hidden Out
+
+		double ratioLearn = 0.05;
+		double predictedY;
 
 	};
