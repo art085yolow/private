@@ -25,8 +25,8 @@
 		// funkcje wykonawcze
 		void process();
 
-		// update weight and bias sending the cost error and reset derivatives
-		void updateWeightBias(double costErr); 
+		// update weight and bias sending the cost error and reset derivatives --- kalkulacje weight i bias przeniesc pozniej do neuralnetwork.h lub factory/calculation.h aby zmniejszyc liczbe "pracy z pusta taczka"
+		void updateWeightBias(); 
 
 
 		// funkcje set
@@ -34,12 +34,14 @@
 		void setBias(double val);
 		void setInputOutput(double* val);
 		void setSumActiv(SummationEnum _typSum, ActivationEnum _typActiv);
+		void setDerivatives(double cost);
 
 
 
 		// funkcje get
 		double getAxon();
 		double getBias();
+		std::vector<Synapse*> getWeightVec();
 
 	private:
 		SummationEnum typSum = SummationEnum::Suma;
@@ -64,5 +66,4 @@
 		
 		// 1.do warstwy poprzesniej wysyla inputDendrides[i].derivativesCalculation(costError * w[i]) // 2.obliczyc bias i wage
 		void derivativesCalculation();
-		void setDerivatives(double cost);
 	};

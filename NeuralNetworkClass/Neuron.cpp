@@ -44,10 +44,16 @@ void Neuron::process()
 
 }
 
-void Neuron::updateWeightBias(double costErr)
+void Neuron::updateWeightBias()
 {
-	this->setDerivatives(costErr);
+	if (!this->inputsDendrites.empty())
+	{
+		for (size_t i = 0, tt = this->inputsDendrites.size(); i < tt; i++)
+		{
+			this->inputsDendrites[i]->setDerivatives(this->derivativesError * this->_dendrites[i]->getWeight());
+		}
 	this->derivativesCalculation();
+	}
 }
 
 void Neuron::activationFunction()
@@ -159,13 +165,6 @@ void Neuron::setDerivatives(double cost)
 {
 	this->derivativesError += cost;
 	
-	if (!this->inputsDendrites.empty())
-	{
-		for (size_t i = 0, tt = this->inputsDendrites.size(); i < tt; i++)
-		{
-			this->inputsDendrites[i]->setDerivatives(this->derivativesError * this->_dendrites[i]->getWeight());
-		}
-	}
 }
 
 
@@ -177,4 +176,9 @@ double Neuron::getAxon()
 double Neuron::getBias()
 {
 	return this->bias;
+}
+
+std::vector<Synapse*> Neuron::getWeightVec()
+{
+	return this->_dendrites;
 }
