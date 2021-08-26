@@ -25,12 +25,16 @@
 
 		// lista bledu dla warstwy output do obliczen -- znalesc i zrozumiec!
 
-		void setError(); // -- ustalic co wyslac lub jakie funkcje spisac <?> --- TODO
+		void setError(); // -- ustalic co wyslac lub jakie funkcje spisac 
+		void setYPredicted(std::vector<double> testOut);
+		void backProb(); // -- kalkulacja dla wag -- TODO
 
 	private:
 		std::vector<Layer*> NeuralNetworkLayers; //obejmuje In Hidden Out
 
 		double ratioLearn = 0.05;
-		double predictedY =0.0;
+		std::vector<double> errors;
+		std::vector<double> y;
+
 
 	};

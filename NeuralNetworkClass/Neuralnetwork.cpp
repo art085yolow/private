@@ -42,6 +42,24 @@ void NeuralNetwork::process()
 	}
 }
 
+void NeuralNetwork::setYPredicted(std::vector<double> testOut)
+{
+	for (size_t i = 0, tt = testOut.size(); i < tt; i++)
+	{
+		this->y.push_back(testOut[i]);
+	}
+}
+
+void NeuralNetwork::setError()
+{
+	// error = r * 2(a^L - y);
+	if(this->NeuralNetworkLayers.size() == this->y.size())
+	for (size_t i = 0, tt = this->NeuralNetworkLayers.size(); i < tt; i++)
+	{
+		this->errors.push_back(this->ratioLearn * 2 * (this->NeuralNetworkLayers[tt - 1]->neuronsInLayer[i]->getAxon() - this->y[i]));
+	}
+}
+
 void NeuralNetwork::setInputsOutputs(std::vector<double*> inputs, std::vector<double*> outputs)
 {
 
