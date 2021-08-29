@@ -42,7 +42,7 @@ void NeuralNetwork::process()
 	}
 }
 
-void NeuralNetwork::setYPredicted(std::vector<double> testOut)
+void NeuralNetwork::setYPredicted(std::vector<double> testOut) //rebuild
 {
 	for (size_t i = 0, tt = testOut.size(); i < tt; i++)
 	{
@@ -50,13 +50,60 @@ void NeuralNetwork::setYPredicted(std::vector<double> testOut)
 	}
 }
 
+void NeuralNetwork::setRatio(double ratio)
+{
+	this->ratioLearn = ratio;
+}
+
+double NeuralNetwork::getError()
+{
+	setError();
+	return this->totalError;
+}
+
+void NeuralNetwork::calculateTotalError()
+{
+	// !Budowa matrycy obliczen -- nie ma na skroty! -- tzn-wiecej kodu --- poprawic //setError//setYPredicted//	spr. obliczanie pochodnych weight/bias w Neuronach
+	std::vector<double*> calcError;
+	for (size_t i = 0, ll = NeuralNetworkLayers.size() - 1, tt = NeuralNetworkLayers[ll]->neuronsInLayer.size(); i < tt; i++)
+	{
+			double er =-(this->y[i] - this->NeuralNetworkLayers[ll]->neuronsInLayer[i]->getAxon()) * this->NeuralNetworkLayers[ll]->neuronsInLayer[i]->getDerivativeAxon();
+			calcError.push_back(new double(er));
+
+	}
+
+
+	this->errors = calcError;  /// error ostatniej warstwy PRAWIDLOWO
+
+	calcError.clear();
+
+	for (size_t i = 0, tl = this->NeuralNetworkLayers.size() - 1, j = 0, tn = this->NeuralNetworkLayers[ tl-i]->neuronsInLayer.size()-1; i < tl; i++)
+	{
+		for (; j < tn; j++)
+		{
+			std::vector<double*> weightOld = this->NeuralNetworkLayers[tl - i]->neuronsInLayer[j]->getWeightVec();
+			
+			for (size_t w = 0, tt = this->NeuralNetworkLayers[tl-i]->neuronsInLayer[j]->getWeightVec().size(); w < tt; w++)
+			{
+
+			}
+		}
+	}
+
+
+
+	//	TODO
+
+}
+
 void NeuralNetwork::setError()
 {
-	// error = r * 2(a^L - y);
-	if(this->NeuralNetworkLayers.size() == this->y.size())
-	for (size_t i = 0, tt = this->NeuralNetworkLayers.size(); i < tt; i++)
+	this->totalError = 0.0;
+	size_t lOut = this->NeuralNetworkLayers.size() - 1;
+	for (size_t i = 0, tt = this->NeuralNetworkLayers[lOut]->neuronsInLayer.size(); i < tt; i++)
 	{
-		this->errors.push_back(this->ratioLearn * 2 * (this->NeuralNetworkLayers[tt - 1]->neuronsInLayer[i]->getAxon() - this->y[i]));
+		double errorOut = 0.5 * ((this->y[i] - this->NeuralNetworkLayers[lOut]->neuronsInLayer[i]->getAxon()) * (this->y[i] - this->NeuralNetworkLayers[lOut]->neuronsInLayer[i]->getAxon()));
+		this->totalError += errorOut;
 	}
 }
 

@@ -151,14 +151,12 @@
     <ClCompile Include="Neuralnetwork.cpp" />
     <ClCompile Include="NeuralNetworkClass.cpp" />
     <ClCompile Include="Neuron.cpp" />
-    <ClCompile Include="Synapse.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Neuralnetwork.h" />
     <ClInclude Include="Neuron.h" />
     <ClInclude Include="SAEnum.h" />
-    <ClInclude Include="Synapse.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

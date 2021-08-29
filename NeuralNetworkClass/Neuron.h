@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 
-#include "Synapse.h"
 #include "SAEnum.h"
 
 	class Neuron
@@ -40,8 +39,9 @@
 
 		// funkcje get
 		double getAxon();
+		double getDerivativeAxon();
 		double getBias();
-		std::vector<Synapse*> getWeightVec();
+		std::vector<double*> getWeightVec();
 
 	private:
 		SummationEnum typSum = SummationEnum::Suma;
@@ -51,11 +51,12 @@
 		double soma = 0.0;
 		double axon = 0.0;
 		double bias = 1.0;
+		double newBias = 0.0;
 
 		double derivativesError = 0.0;
 		
 		// wejscia neuronow - neuron wejsciowy i synapsa
-		std::vector<Synapse*> _dendrites; //aktualnie to tylko "double weight". rozwarzyc usuniecie synapse.h/cpp zastepujac poprostu double-list.<?><?>
+		std::vector<double*> _dendrites; //aktualnie to tylko "double weight". rozwarzyc usuniecie synapse.h/cpp zastepujac poprostu double-list.<?><?>
 		std::vector<Neuron*> inputsDendrites;
 		
 		// wartosci do/z neuronu 
