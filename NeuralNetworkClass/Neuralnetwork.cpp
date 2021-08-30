@@ -77,17 +77,36 @@ void NeuralNetwork::calculateTotalError()
 
 	calcError.clear();
 
-	for (size_t i = 0, tl = this->NeuralNetworkLayers.size() - 1, j = 0, tn = this->NeuralNetworkLayers[ tl-i]->neuronsInLayer.size()-1; i < tl; i++)
+	for (size_t i = 0, tl = this->NeuralNetworkLayers.size()-1, j = 0, tn = this->NeuralNetworkLayers[ tl-i]->neuronsInLayer.size(); i < tl; i++)
 	{
-		for (; j < tn; j++)
+		for (j=0; j < tn; j++)
 		{
 			std::vector<double*> weightOld = this->NeuralNetworkLayers[tl - i]->neuronsInLayer[j]->getWeightVec();
 			
-			for (size_t w = 0, tt = this->NeuralNetworkLayers[tl-i]->neuronsInLayer[j]->getWeightVec().size(); w < tt; w++)
+			for (size_t w = 0, tt = weightOld.size(); w < tt; w++)
 			{
+				if (calcError.size() != weightOld.size())
+				{
+					calcError.push_back(new double(0.0));
+				}
 
+				*calcError[w] += *weightOld[w] * *errors[j];
+				*weightOld[w] = *weightOld[w] - this->ratioLearn * this->NeuralNetworkLayers[tl - i - 1]->neuronsInLayer[w]->getAxon() * *errors[j];
+				
 			}
+			
+			// bias
+			this->NeuralNetworkLayers[tl - i]->neuronsInLayer[j]->setBias(this->NeuralNetworkLayers[tl - i]->neuronsInLayer[j]->getBias() - ratioLearn * *errors[j]);
 		}
+
+		for (j = 0; j < this->NeuralNetworkLayers[tl - i - 1]->neuronsInLayer.size(); j++)
+		{
+			// error dla wartswy L-1
+			*calcError[j] = this->NeuralNetworkLayers[tl - i - 1]->neuronsInLayer[j]->getDerivativeAxon() * *calcError[j];
+		}
+		
+		this->errors = calcError;
+		calcError.clear();
 	}
 
 
