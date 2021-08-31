@@ -1,13 +1,17 @@
 ﻿#include <iostream>
 #include <vector>
 
-#include "Neuralnetwork.h"
+#include "include/Neuralnetwork.h"
 
+void test1();
+void test2();
+void test3();
 
 int main()
 {
     std::cout << "Hello World!\n";
    
+    test3();
 
     std::cin.get();
 
@@ -15,48 +19,48 @@ int main()
     return 0;
 }
 
-/*
-*               ETAP PIEWRWSZY
-        ///     PRZESZEDL PIERWSZY TEST KIERUNKOWY      ///
-
-    std::vector<double*> wejscie, wyjscie;
+void test1()
+{
+/*               ETAP PIEWRWSZY -- STAGE ONE
+        ///             FEEDFORWARD                ///
+ */
+    std::vector<double*> input, output;
 
     for (size_t i = 0; i < 5; i++)
     {
-        wejscie.push_back(new double(i + 2.0));
+        input.push_back(new double(i + 2.0));
     }
 
     for (size_t i = 0; i < 3; i++)
     {
-        wyjscie.push_back(new double);
+        output.push_back(new double);
     }
 
-    NeuralNetwork siec;
+    NeuralNetwork net;
 
-    siec.createLayersOfNeurons(wejscie, wyjscie, 1, 2);
+    net.createLayersOfNeurons(input, output, 1, 2);
 
-    siec.process();
+    net.process();
 
-    for (double* d : wejscie)
+    for (double* d : input)
     {
         std::cout << "Wejscie " << *d << std::endl;
     }
     std::cout<<std::endl;
 
-    for (double* w : wyjscie)
+    for (double* w : output)
     {
         std::cout << "Wyjscia " << *w << std::endl;
     }
 
-*/
-
+}
 
 /*      ETAP DRUGI      -----------         WDROZYC BACKPROPAGATION!!!!         */        
+void test2()
+{
 
-    /*
-
-   // przyklad do etapu drugiego
-    /*
+   // przyklad do etapu drugiego -- example net
+    /*  2x2x2
     *   input-1 = 0.05      input-2 = 0.1
     *   w1 = 0.15   w2 = 0.2    w3 = 0.25   w4 = 0.3
     *   h1                      h2                      b1 = 0.35
@@ -67,9 +71,8 @@ int main()
     *
     * ratio = 0.5
     */
-    /*
 
-    /// przygotowanie
+    /// przygotowanie -- preparing
 
     std::vector<double*> in;
     in.push_back(new double(0.05));
@@ -77,7 +80,7 @@ int main()
 
     for (size_t i = 0, tt = in.size(); i < tt; i++)
     {
-        std::cout << "i" << i << " = " << *in[i] << std::endl;
+        std::cout << "input-" << i << " = " << *in[i] << std::endl;
     }
     std::cout << std::endl;
 
@@ -87,7 +90,7 @@ int main()
 
     for (size_t i = 0, tt = out.size(); i < tt; i++)
     {
-        std::cout << "o" << i << " = " << *out[i] << std::endl;
+        std::cout << "ooutput-" << i << " = " << *out[i] << std::endl;
     }
 
     NeuralNetwork nn;
@@ -100,23 +103,23 @@ int main()
     nn.setYPredicted(yOut);
     nn.setRatio(0.5);
 
-    std::vector<double*> wagi = nn.NeuralNetworkLayers[1]->neuronsInLayer[0]->getWeightVec();
-    *wagi[0] = 0.15;
-    *wagi[1] = 0.2;
+    std::vector<double*> weights = nn.NeuralNetworkLayers[1]->neuronsInLayer[0]->getWeightVec();
+    *weights[0] = 0.15;
+    *weights[1] = 0.2;
 
-    wagi = nn.NeuralNetworkLayers[1]->neuronsInLayer[1]->getWeightVec();
-    *wagi[0] = 0.25;
-    *wagi[1] = 0.30;
+    weights = nn.NeuralNetworkLayers[1]->neuronsInLayer[1]->getWeightVec();
+    *weights[0] = 0.25;
+    *weights[1] = 0.30;
 
-    wagi = nn.NeuralNetworkLayers[2]->neuronsInLayer[0]->getWeightVec();
-    *wagi[0] = 0.4;
-    *wagi[1] = 0.45;
+    weights = nn.NeuralNetworkLayers[2]->neuronsInLayer[0]->getWeightVec();
+    *weights[0] = 0.4;
+    *weights[1] = 0.45;
 
-    wagi = nn.NeuralNetworkLayers[2]->neuronsInLayer[1]->getWeightVec();
-    *wagi[0] = 0.5;
-    *wagi[1] = 0.55;
+    weights = nn.NeuralNetworkLayers[2]->neuronsInLayer[1]->getWeightVec();
+    *weights[0] = 0.5;
+    *weights[1] = 0.55;
 
-    wagi.clear();
+    weights.clear();
 
     nn.NeuralNetworkLayers[1]->neuronsInLayer[0]->setBias(0.35);
     nn.NeuralNetworkLayers[1]->neuronsInLayer[1]->setBias(0.35);
@@ -130,13 +133,13 @@ int main()
 
     for (size_t i = 0, tt = out.size(); i < tt; i++)
     {
-        std::cout << "o" << i << " = " << *out[i] << std::endl;
+        std::cout << "output-" << i << " = " << *out[i] << std::endl;
     }
 
     /// <summary>
-    ///  siec wstepna gotowa
+    ///  siec wstepna gotowa -- net done
     ///
-    /// przewidzne wyniki
+    /// przewidzne wyniki - predictecd results
     ///
     /// h1 = 0.59326992
     /// h2 = 0.596884378
@@ -144,7 +147,8 @@ int main()
     /// o1 = 0.75136507
     /// o2 = 0.772928465
     ///
-    /// wyniki zgodne -- feedforward PRAWIDLOWY!!!!
+    /// wyniki zgodne -- results correct 
+    /// -- feedforward -- CORRECT --  PRAWIDLOWY!!!!
     ///
     /// </summary>
     /// <returns></returns>
@@ -153,37 +157,46 @@ int main()
     std::cout << std::endl;
 
 
-    std::cout << "Blad sieci : " << nn.getError() << std::endl;
+    std::cout << "Blad sieci -- Net Error : " << nn.getError() << std::endl;
 
     /// <summary>
     ///
     /// obliczanie bledu PRAWIDLOWO!!!!
-    ///
+    /// calculation net error - correct!
     ///
     /// Zaczynamy proces backpropagation!!!
-    ///
+    /// initiation backpropagation!
+    /// 
     /// </summary>
     /// <returns></returns>
-    double azdo = nn.getError();
-    double wynik = 0.000001;
-    while (azdo > wynik)
+    double netError = nn.getError();
+    double predictedError = 0.000001;
+    while (netError > predictedError)
     {
         nn.calculateTotalError();
         nn.process();
-        std::cout << "Blad sieci : " << nn.getError() << std::endl;
-        azdo = nn.getError();
+        std::cout << "Blad sieci -- Net Error : " << nn.getError() << std::endl;
+        netError = nn.getError();
     }
 
     for (size_t i = 0, tt = out.size(); i < tt; i++)
     {
-        std::cout << "o" << i << " = " << *out[i] << std::endl;
+        std::cout << "output-" << i << " = " << *out[i] << std::endl;
     }
 
     /// <summary>
     ///
     ///         przykładowa siec --- zaliczone!!!! zdala!!!!
-    ///
+    ///         example net --- correct!!! done!!!
     /// </summary>
     /// <returns></returns>
 
-    */
+ 
+}
+
+void test3()
+{
+    // prepering data for test //
+    // target MNIST //
+
+}

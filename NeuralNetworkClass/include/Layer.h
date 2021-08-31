@@ -9,6 +9,7 @@
 		Layer();
 		~Layer();
 
+		// activate calculation in each neuron
 		void process();
 
 	

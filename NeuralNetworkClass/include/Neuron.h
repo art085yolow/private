@@ -7,64 +7,76 @@
 	{
 	public:
 		Neuron();
-		// Neuron(konstruktor z wartosciami wejsciowymi); // czy sa potrzebne?
 
 		// Create Neuron with input value
 		Neuron(double* in);
 
-		// Create Neuron with last layer and set Summation and Activation
+		// Create Neuron(second layer ++) with connection with layer L-1 and set Summation and Activation
 		Neuron(std::vector<Neuron*> synapseIn, SummationEnum typSum = SummationEnum::Suma, ActivationEnum typActiv = ActivationEnum::Sigm);
 		
-		// Create Neuron in last layer with layer befor and set Summation and Activation
+		// Create Neuron with connection with layer L-1 with desired output and set Summation and Activation
 		Neuron(std::vector<Neuron*> synapseIn, double* out, SummationEnum typSum = SummationEnum::Suma, ActivationEnum typActiv = ActivationEnum::Sigm);
 		
 		~Neuron();
 
 
-		// funkcje wykonawcze
+		// feedforward
 		void process();
 
-		// update weight and bias sending the cost error and reset derivatives --- kalkulacje weight i bias przeniesc pozniej do neuralnetwork.h lub factory/calculation.h aby zmniejszyc liczbe "pracy z pusta taczka"
-		void updateWeightBias(); 
+		
 
+		// set
 
-		// funkcje set
+		// set connection and weight
 		void setSynapse(std::vector<Neuron*> synapseIn);
+		
+		// set bias
 		void setBias(double val);
+		
+		// set ptr inOutValue -- for input or output for/from calculation
 		void setInputOutput(double* val);
+		
+		// set type of summation or activation
 		void setSumActiv(SummationEnum _typSum, ActivationEnum _typActiv);
-		void setDerivatives(double cost);
 
 
+		//  get
 
-		// funkcje get
+		// get result value of neuron
 		double getAxon();
+
+		// derivative function for backpropagation
 		double getDerivativeAxon();
+
+		// get value of bias
 		double getBias();
+
+		// get vector of weight of neurons connected with this neuron
 		std::vector<double*> getWeightVec();
 
 	private:
 		SummationEnum typSum = SummationEnum::Suma;
 		ActivationEnum typActiv = ActivationEnum::Sigm;
 		
-		// wartosci neuronow
-		double soma = 0.0;
-		double axon = 0.0;
-		double bias = 1.0;
-		double newBias = 0.0;
+		// neuron value
 
-		double derivativesError = 0.0;
+		// summation value
+		double soma = 0.0;
+
+		// activated value of neuron
+		double axon = 0.0;
+
+		double bias = 1.0;
 		
-		// wejscia neuronow - neuron wejsciowy i synapsa
-		std::vector<double*> _dendrites; //aktualnie to tylko "double weight". rozwarzyc usuniecie synapse.h/cpp zastepujac poprostu double-list.<?><?>
+		// connected inputs neurons and coresponted weights
+		std::vector<double*> _weights; 
 		std::vector<Neuron*> inputsDendrites;
 		
-		// wartosci do/z neuronu 
+		// ptr for input value and output to send out
 		double* inOutValue = nullptr;
 
+		// calculation function
 		void activationFunction();
 		void summationFunctions();
 		
-		// 1.do warstwy poprzesniej wysyla inputDendrides[i].derivativesCalculation(costError * w[i]) // 2.obliczyc bias i wage
-		void derivativesCalculation();
 	};

@@ -1,4 +1,4 @@
-#include "Neuron.h"
+#include "../include/Neuron.h"
 
 Neuron::Neuron()
 {
@@ -28,7 +28,7 @@ Neuron::~Neuron()
 
 void Neuron::process()
 {
-	if (_dendrites.empty())
+	if (_weights.empty())
 	{
 		this->axon = *inOutValue;
 	}
@@ -44,10 +44,6 @@ void Neuron::process()
 
 }
 
-void Neuron::updateWeightBias()
-{
-	
-}
 
 void Neuron::activationFunction()
 {
@@ -81,9 +77,9 @@ void Neuron::summationFunctions()
 	{
 	case SummationEnum::Min:
 		
-		for (size_t i = 0, tt = _dendrites.size(); i < tt; i++)
+		for (size_t i = 0, tt = _weights.size(); i < tt; i++)
 		{
-			double min = this->inputsDendrites[i]->getAxon() * *this->_dendrites[i];
+			double min = this->inputsDendrites[i]->getAxon() * *this->_weights[i];
 			if (min < this->soma)
 			{
 				this->soma = min;
@@ -91,9 +87,9 @@ void Neuron::summationFunctions()
 		}
 		break;
 	case SummationEnum::Max:
-		for (size_t i = 0, tt = _dendrites.size(); i < tt; i++)
+		for (size_t i = 0, tt = _weights.size(); i < tt; i++)
 		{
-			double max = this->inputsDendrites[i]->getAxon() * *this->_dendrites[i];
+			double max = this->inputsDendrites[i]->getAxon() * *this->_weights[i];
 			if (this->soma<max)
 			{
 				this->soma = max;
@@ -101,37 +97,27 @@ void Neuron::summationFunctions()
 		}
 		break;
 	case SummationEnum::Average:
-		for (size_t i = 0, tt = _dendrites.size(); i < tt; i++)
+		for (size_t i = 0, tt = _weights.size(); i < tt; i++)
 		{
-			this->soma += this->inputsDendrites[i]->getAxon() * *this->_dendrites[i];
+			this->soma += this->inputsDendrites[i]->getAxon() * *this->_weights[i];
 		}
-		this->soma /= this->_dendrites.size();
+		this->soma /= this->_weights.size();
 		break;
 	case SummationEnum::Suma:
 	default:
-		for (size_t i = 0, tt = _dendrites.size(); i < tt; i++)
+		for (size_t i = 0, tt = _weights.size(); i < tt; i++)
 		{
-			this->soma += this->inputsDendrites[i]->getAxon() * *this->_dendrites[i];
+			this->soma += this->inputsDendrites[i]->getAxon() * *this->_weights[i];
 		}
 		break;
 	}
 }
 
-void Neuron::derivativesCalculation() //<?> nie tu <?>
-{
-	for (size_t i = 0, tt = this->_dendrites.size(); i < tt; i++)
-	{
-		*this->_dendrites[i]=(*this->_dendrites[i] - this->inputsDendrites[i]->getAxon() * this->derivativesError);
-	}
-	this->setBias(this->getBias() - this->derivativesError);
-
-	this->derivativesError = 0.0;
-}
 
 void Neuron::setSynapse(std::vector<Neuron*> synapseIn)
 {
 	for (size_t i = 0, tt = synapseIn.size(); i < tt; i++) {
-		this->_dendrites.push_back(new double(1 - (double)rand() / RAND_MAX));
+		this->_weights.push_back(new double(1 - (double)rand() / RAND_MAX));
 		this->inputsDendrites.push_back(synapseIn[i]);
 	}
 
@@ -152,12 +138,6 @@ void Neuron::setSumActiv(SummationEnum _typSum, ActivationEnum _typActiv)
 {
 	this->typSum = _typSum;
 	this->typActiv = _typActiv;
-}
-
-void Neuron::setDerivatives(double cost)
-{
-	this->derivativesError += cost;
-	
 }
 
 
@@ -196,5 +176,5 @@ double Neuron::getBias()
 
 std::vector<double*> Neuron::getWeightVec()
 {
-	return this->_dendrites;
+	return this->_weights;
 }

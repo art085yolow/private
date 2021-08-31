@@ -1,4 +1,4 @@
-#include "Neuralnetwork.h"
+#include "../include/Neuralnetwork.h"
 
 
 void NeuralNetwork::createLayersOfNeurons(std::vector<double*> inputs, std::vector<double*> outputs, unsigned int nrLayers, unsigned int nrNeuronsInLayer, SummationEnum typSum, ActivationEnum typActiv)
@@ -42,7 +42,7 @@ void NeuralNetwork::process()
 	}
 }
 
-void NeuralNetwork::setYPredicted(std::vector<double> testOut) //rebuild
+void NeuralNetwork::setYPredicted(std::vector<double> testOut) 
 {
 	for (size_t i = 0, tt = testOut.size(); i < tt; i++)
 	{
@@ -63,7 +63,7 @@ double NeuralNetwork::getError()
 
 void NeuralNetwork::calculateTotalError()
 {
-	// !Budowa matrycy obliczen -- nie ma na skroty! -- tzn-wiecej kodu --- poprawic //setError//setYPredicted//	spr. obliczanie pochodnych weight/bias w Neuronach
+	
 	std::vector<double*> calcError;
 	for (size_t i = 0, ll = NeuralNetworkLayers.size() - 1, tt = NeuralNetworkLayers[ll]->neuronsInLayer.size(); i < tt; i++)
 	{
@@ -73,7 +73,7 @@ void NeuralNetwork::calculateTotalError()
 	}
 
 
-	this->errors = calcError;  /// error ostatniej warstwy PRAWIDLOWO
+	this->errors = calcError;  /// error ostatniej warstwy PRAWIDLOWO --- error last layer -- correct
 
 	calcError.clear();
 
@@ -101,17 +101,13 @@ void NeuralNetwork::calculateTotalError()
 
 		for (j = 0; j < this->NeuralNetworkLayers[tl - i - 1]->neuronsInLayer.size(); j++)
 		{
-			// error dla wartswy L-1
+			// error for L-1
 			*calcError[j] = this->NeuralNetworkLayers[tl - i - 1]->neuronsInLayer[j]->getDerivativeAxon() * *calcError[j];
 		}
 		
 		this->errors = calcError;
 		calcError.clear();
 	}
-
-
-
-	//	TODO
 
 }
 
