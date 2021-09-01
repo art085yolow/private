@@ -44,13 +44,13 @@ void test1()
 
     for (double* d : input)
     {
-        std::cout << "Wejscie " << *d << std::endl;
+        std::cout << "Wejscie - input " << *d << std::endl;
     }
     std::cout<<std::endl;
 
     for (double* w : output)
     {
-        std::cout << "Wyjscia " << *w << std::endl;
+        std::cout << "Wyjscia - output " << *w << std::endl;
     }
 
 }
@@ -103,28 +103,28 @@ void test2()
     nn.setYPredicted(yOut);
     nn.setRatio(0.5);
 
-    std::vector<double*> weights = nn.NeuralNetworkLayers[1]->neuronsInLayer[0]->getWeightVec();
+    std::vector<double*> weights = nn.getNetLayers()[1]->getNeuronsFromLayer()[0]->getWeightVec();
     *weights[0] = 0.15;
     *weights[1] = 0.2;
 
-    weights = nn.NeuralNetworkLayers[1]->neuronsInLayer[1]->getWeightVec();
+    weights = nn.getNetLayers()[1]->getNeuronsFromLayer()[1]->getWeightVec();
     *weights[0] = 0.25;
     *weights[1] = 0.30;
 
-    weights = nn.NeuralNetworkLayers[2]->neuronsInLayer[0]->getWeightVec();
+    weights = nn.getNetLayers()[2]->getNeuronsFromLayer()[0]->getWeightVec();
     *weights[0] = 0.4;
     *weights[1] = 0.45;
 
-    weights = nn.NeuralNetworkLayers[2]->neuronsInLayer[1]->getWeightVec();
+    weights = nn.getNetLayers()[2]->getNeuronsFromLayer()[1]->getWeightVec();
     *weights[0] = 0.5;
     *weights[1] = 0.55;
 
     weights.clear();
 
-    nn.NeuralNetworkLayers[1]->neuronsInLayer[0]->setBias(0.35);
-    nn.NeuralNetworkLayers[1]->neuronsInLayer[1]->setBias(0.35);
-    nn.NeuralNetworkLayers[2]->neuronsInLayer[0]->setBias(0.60);
-    nn.NeuralNetworkLayers[2]->neuronsInLayer[1]->setBias(0.60);
+    nn.getNetLayers()[1]->getNeuronsFromLayer()[0]->setBias(0.35);
+    nn.getNetLayers()[1]->getNeuronsFromLayer()[1]->setBias(0.35);
+    nn.getNetLayers()[2]->getNeuronsFromLayer()[0]->setBias(0.60);
+    nn.getNetLayers()[2]->getNeuronsFromLayer()[1]->setBias(0.60);
 
     nn.process();
 
@@ -174,6 +174,7 @@ void test2()
     while (netError > predictedError)
     {
         nn.calculateTotalError();
+        nn.backProb();
         nn.process();
         std::cout << "Blad sieci -- Net Error : " << nn.getError() << std::endl;
         netError = nn.getError();
@@ -214,4 +215,6 @@ void test3()
     *   4. create appropriate places or classes to handle test no. 3 - simplify the reading of the results
     */
 
+    /// new image - data.sendImage(); -> load to inputs network -> processing -> calculating target results - output results -> backprop -> repit process
+    /// test 10 image -> calculate sum error for each neuron -> backprop -> repit
 }

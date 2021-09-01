@@ -24,6 +24,9 @@ Neuron::Neuron(std::vector<Neuron*> synapseIn, double* out, SummationEnum typSum
 
 Neuron::~Neuron()
 {
+	this->_weights.clear();
+	this->inputsDendrites.clear();
+	delete this->inOutValue;
 }
 
 void Neuron::process()
@@ -177,4 +180,9 @@ double Neuron::getBias()
 std::vector<double*> Neuron::getWeightVec()
 {
 	return this->_weights;
+}
+
+std::vector<Neuron*> Neuron::getInputNeuronsVec()
+{
+	return this->inputsDendrites;
 }

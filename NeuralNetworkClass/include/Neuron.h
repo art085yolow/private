@@ -11,7 +11,7 @@
 		// Create Neuron with input value
 		Neuron(double* in);
 
-		// Create Neuron(second layer ++) with connection with layer L-1 and set Summation and Activation
+		// Create Neuron(last layer) with connection with layer L-1 and set Summation and Activation
 		Neuron(std::vector<Neuron*> synapseIn, SummationEnum typSum = SummationEnum::Suma, ActivationEnum typActiv = ActivationEnum::Sigm);
 		
 		// Create Neuron with connection with layer L-1 with desired output and set Summation and Activation
@@ -53,6 +53,9 @@
 
 		// get vector of weight of neurons connected with this neuron
 		std::vector<double*> getWeightVec();
+
+		// get vector of input-neurons connected with this neuron
+		std::vector<Neuron*> getInputNeuronsVec();
 
 	private:
 		SummationEnum typSum = SummationEnum::Suma;

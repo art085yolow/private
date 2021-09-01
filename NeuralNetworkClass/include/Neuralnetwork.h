@@ -9,6 +9,7 @@
 	{
 	public:
 		NeuralNetwork();
+		~NeuralNetwork();
 
 
 		/*		Simple creator		----	automatyczne dopasowanie ilosci wejsc i wyjsc(<vector>inputs, <vector>outputs), liczba warstw ukrytych, liczba neuronow w warstwach ukrytych, (enum) typ sumowania(domyslna SUMA), (enum) typ aktywacji(domyslna SIGM)		//
@@ -44,8 +45,11 @@
 		// get NET Error
 		double getError();
 
-		std::vector<Layer*> NeuralNetworkLayers; // first layer -- input / last layer -- output
+		// get Layers vector of this net
+		std::vector<Layer*> getNetLayers();
+
 	private:
+		std::vector<Layer*> NeuralNetworkLayers; // first layer -- input / last layer -- output
 
 		double ratioLearn = 0.05;
 		double totalError = 0.0;
