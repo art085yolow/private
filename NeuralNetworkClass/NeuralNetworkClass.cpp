@@ -199,4 +199,19 @@ void test3()
     // prepering data for test //
     // target MNIST //
 
+    /// train/test images data file
+    /// 4 * sizeof(integer) - magic number(2051), number of images(60 000 or 10 000), number of rows(28), number of columns(28)
+    /// offset 4*sizeof(integer) - unsigned byte (pixel value 0-255 : 0 - white(empty), 255 - black(full)
+    /// 
+    /// train/test label data file
+    /// 2 * sizeof(integer) - magic number(2049), number of labels(60 000 or 10 000)
+    /// offset 2 * sizeof(integer) - unsigned byte (value label = name)
+
+    /*
+    *   1. read data file - byte stream
+    *   2. put to storage
+    *   3. prepaire net inputs (28x28 pixels = 784 inputs, 2 hidden layer per 16 neurons, 10 outputs - accordingly index 0 is number 0 (zero))
+    *   4. create appropriate places or classes to handle test no. 3 - simplify the reading of the results
+    */
+
 }
