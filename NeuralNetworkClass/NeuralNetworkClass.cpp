@@ -1,7 +1,12 @@
 ﻿#include <iostream>
 #include <vector>
+#include <cstdlib>
 
 #include "include/Neuralnetwork.h"
+#include "include/render/WindowNet.h"
+#include "src/utils.cpp"
+
+GLOBAL_VARIABLE bool running = true;
 
 void test1();
 void test2();
@@ -11,9 +16,27 @@ int main()
 {
     std::cout << "Hello World!\n";
    
-    test3();
+    WindowNet* progWindow = new WindowNet();
 
-    std::cin.get();
+    
+    test3();    /// refactoring code if needed to run with window /// option 1 : create a test3 as a <!> class <!> and what to have
+
+    while(running)
+    {
+        if (!progWindow->ProcessMsg())
+        {
+            std::cout << "Closing Window\n";
+            running = false;
+        }
+
+        // Render
+        
+        progWindow->render();
+
+        Sleep(100); // for now to not overstress cpu
+    }
+
+   
 
 
     return 0;
@@ -90,7 +113,7 @@ void test2()
 
     for (size_t i = 0, tt = out.size(); i < tt; i++)
     {
-        std::cout << "ooutput-" << i << " = " << *out[i] << std::endl;
+        std::cout << "output-" << i << " = " << *out[i] << std::endl;
     }
 
     NeuralNetwork nn;
@@ -106,6 +129,7 @@ void test2()
     std::vector<double*> weights = nn.getNetLayers()[1]->getNeuronsFromLayer()[0]->getWeightVec();
     *weights[0] = 0.15;
     *weights[1] = 0.2;
+
 
     weights = nn.getNetLayers()[1]->getNeuronsFromLayer()[1]->getWeightVec();
     *weights[0] = 0.25;
@@ -202,7 +226,7 @@ void test3()
 
     /// train/test images data file
     /// 4 * sizeof(integer) - magic number(2051), number of images(60 000 or 10 000), number of rows(28), number of columns(28)
-    /// offset 4*sizeof(integer) - unsigned byte (pixel value 0-255 : 0 - white(empty), 255 - black(full)
+    /// offset 4*sizeof(integer) - unsigned byte (pixel value 0-255 : 0 - white(empty), 255 - black(full)  //  value / 255 = double result 0.0 - 1.0
     /// 
     /// train/test label data file
     /// 2 * sizeof(integer) - magic number(2049), number of labels(60 000 or 10 000)
@@ -213,8 +237,10 @@ void test3()
     *   2. put to storage
     *   3. prepaire net inputs (28x28 pixels = 784 inputs, 2 hidden layer per 16 neurons, 10 outputs - accordingly index 0 is number 0 (zero))
     *   4. create appropriate places or classes to handle test no. 3 - simplify the reading of the results
+    *   5. create window for graphs/images/ui -- still todo - what date needed
     */
 
     /// new image - data.sendImage(); -> load to inputs network -> processing -> calculating target results - output results -> backprop -> repit process
     /// test 10 image -> calculate sum error for each neuron -> backprop -> repit
+
 }

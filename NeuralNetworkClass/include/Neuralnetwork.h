@@ -48,6 +48,7 @@
 		// get Layers vector of this net
 		std::vector<Layer*> getNetLayers();
 
+		
 	private:
 		std::vector<Layer*> NeuralNetworkLayers; // first layer -- input / last layer -- output
 
