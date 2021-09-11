@@ -1,8 +1,8 @@
 #include "../../include/render/WindowNet.h"
-#include <iostream>
+
 
 #include "../utils.cpp"
-
+#include "../controls.cpp"
 
 struct Render_State
 {
@@ -15,7 +15,14 @@ struct Render_State
 GLOBAL_VARIABLE Render_State render_state;
 HDC hdc;
 
+Input input = {};
+
 #include "renderer.cpp"
+unsigned int background = 0;
+unsigned int valBackground = 0;
+float deltaTime = 0.0f;
+LARGE_INTEGER frame_begin_time;
+LARGE_INTEGER frame_end_time;
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -93,11 +100,12 @@ WindowNet::WindowNet()
 		m_hInstance,
 		NULL
 	);
-
+	
 	hdc = GetDC(m_hWnd);
 
 	ShowWindow(m_hWnd, SW_SHOW);
 
+	QueryPerformanceCounter(&frame_begin_time);
 }
 
 WindowNet::~WindowNet()
@@ -124,13 +132,31 @@ bool WindowNet::ProcessMsg()
 	MSG msg = {};
 	while (PeekMessage(&msg,nullptr, 0u,0u,PM_REMOVE))
 	{
-		if (msg.message == WM_QUIT)
-		{
+		switch (msg.message)
+		{case WM_QUIT:
 			return false;
+			break;
+		case WM_KEYUP:
+		case WM_KEYDOWN:
+		{
+			u32 vk_code = (u32)msg.wParam;
+			bool is_down = ((msg.lParam & (1 << 31)) == 0);
+
+			switch (vk_code)
+			{
+				process_button(BUTTON_UP, VK_UP);
+				process_button(BUTTON_DOWN, VK_DOWN);
+				process_button(BUTTON_LEFT, VK_LEFT);
+				process_button(BUTTON_RIGHT, VK_RIGHT);
+				process_button(BUTTON_ESC, VK_ESCAPE);
+			}
 		}
-		
+			break;
+		default:
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
+			break;
+		}
 	}
 
 	return true;
@@ -138,13 +164,49 @@ bool WindowNet::ProcessMsg()
 
 void WindowNet::render()
 {
-	 clear_screen(0x990022);
+
+	float performance_frequency;
+	{
+		LARGE_INTEGER perf;
+		QueryPerformanceFrequency(&perf);
+		performance_frequency = (float)perf.QuadPart;
+	}
+
+	for (s32 i = 0; i < BUTTON_COUNT; i++)
+	{
+		input.buttons[i].changed = false;
+	}
+	 clear_screen(background);
 	 //draw_rect_in_pixels(50, 50, 200, 500, 0x00ff22);
-	 draw_rect(-10, -20, 10, 30, 0x00ff22);
-	 draw_rect(10, 10, 5, 15, 0x114522);
-	 draw_rect(0, 0, 20, 20, 0x223377);
+	 
+	 processInputs(deltaTime);
+
+	// draw_rect(3, 3, 3, 3, 0x114522);
+	// draw_rect(0, 0, 2, 2, 0x223377);
 
 
 	StretchDIBits(hdc, 0, 0, render_state.width, render_state.height, 0, 0, render_state.width, render_state.height, render_state.memory, &render_state.bitmapinfo, DIB_RGB_COLORS, SRCCOPY);
+	QueryPerformanceCounter(&frame_end_time);
+
+	deltaTime = (float)(frame_end_time.QuadPart - frame_begin_time.QuadPart) / performance_frequency;
+	frame_begin_time = frame_end_time;
 }
 
+
+
+ void WindowNet::processInputs(float dt)
+{
+	 // if(is_down(BUTTON_DOWN) player_pos_y-=0.1*dt;
+
+	if (is_down(BUTTON_UP))
+		colorUp();
+
+	if (is_down(BUTTON_ESC))
+		PostQuitMessage(0);
+}
+
+ void WindowNet::colorUp()
+ {
+	 valBackground += 1;
+	 background = valBackground + (valBackground << 8) + (valBackground << 16);
+ }

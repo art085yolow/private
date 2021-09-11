@@ -5,6 +5,7 @@
 #include "include/Neuralnetwork.h"
 #include "include/render/WindowNet.h"
 #include "src/utils.cpp"
+#include "include/DataStream.h"
 
 GLOBAL_VARIABLE bool running = true;
 
@@ -20,9 +21,13 @@ int main()
 
     
     test3();    /// refactoring code if needed to run with window /// option 1 : create a test3 as a <!> class <!> and what to have
+    DataStream trainImages("testData/train-images.idx3-ubyte", "testData/train-labels.idx1-ubyte");
+    DataStream testImages("testData/t10k-images.idx3-ubyte", "testData/t10k-labels.idx1-ubyte");
+
 
     while(running)
     {
+
         if (!progWindow->ProcessMsg())
         {
             std::cout << "Closing Window\n";
@@ -33,7 +38,7 @@ int main()
         
         progWindow->render();
 
-        Sleep(100); // for now to not overstress cpu
+        Sleep(10); // for now to not overstress cpu
     }
 
    
@@ -216,7 +221,6 @@ void test2()
     /// </summary>
     /// <returns></returns>
 
- 
 }
 
 void test3()
@@ -225,11 +229,11 @@ void test3()
     // target MNIST //
 
     /// train/test images data file
-    /// 4 * sizeof(integer) - magic number(2051), number of images(60 000 or 10 000), number of rows(28), number of columns(28)
+    /// 4 * sizeof(integer) - magic number(2051), number of images(60 000 or 10 000), number of rows(28), number of columns(28) // size_file = rows * columns * number of images
     /// offset 4*sizeof(integer) - unsigned byte (pixel value 0-255 : 0 - white(empty), 255 - black(full)  //  value / 255 = double result 0.0 - 1.0
     /// 
     /// train/test label data file
-    /// 2 * sizeof(integer) - magic number(2049), number of labels(60 000 or 10 000)
+    /// 2 * sizeof(integer) - magic number(2049), number of labels(60 000 or 10 000) // size_file = number of labels
     /// offset 2 * sizeof(integer) - unsigned byte (value label = name)
 
     /*
@@ -242,5 +246,23 @@ void test3()
 
     /// new image - data.sendImage(); -> load to inputs network -> processing -> calculating target results - output results -> backprop -> repit process
     /// test 10 image -> calculate sum error for each neuron -> backprop -> repit
+
+    /// class data for stream
+    /// - integer magicNumber
+    /// - integer numbersOfImage
+    /// - integer rows
+    /// - integer columns
+    /// - unsigned char* images
+    /// 
+    /*
+    int color;
+    unsigned char rgb;
+    rgb = 34;
+    color = rgb;
+    std::cout << color << std::endl; //34
+    rgb = 255;
+    color += rgb << 8;
+    std::cout << color << std::endl; // 65314
+    */
 
 }
