@@ -20,7 +20,7 @@ INTERNAL void draw_rect_in_pixels(s32 x0, s32 y0, s32 x1, s32 y1, u32 color) {
 	
 	for (s32 y = y0; y < y1; y++)
 	{
-		u32* pixel = (u32*)render_state.memory + x0 + y*(render_state.width);
+		u32* pixel = (u32*)render_state.memory + x0 + y * (render_state.width);
 		for (s32 x = x0; x < x1; x++)
 		{
 			*pixel++ = color;

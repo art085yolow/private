@@ -15,7 +15,11 @@ Image::Image(int width, int height, std::vector<unsigned char> val)
 {
 	this->width = width;
 	this->height = height;
-	this->m_char = val;
+	
+	for (size_t i = 0; i < val.size(); i++)
+	{
+		this->m_char.push_back(unsigned char(val[i]));
+	}
 	
 }
 
@@ -24,7 +28,7 @@ std::vector<unsigned int> Image::getColor()
 	std::vector<unsigned int> colorTab;
 	for (size_t i = 0, tt = this->m_char.size(); i<tt; i++)
 	{
-		unsigned int gray = m_char[i] + (m_char[i] << 8) + (m_char[i] << 16);
+		unsigned int gray = m_char[i] + (m_char[i] << 8) + (m_char[i] << 16) + (0<<24);
 		colorTab.push_back(unsigned int(gray));
 	}
 	return colorTab;
@@ -66,7 +70,7 @@ DataStream::DataStream(const char* pathImage, const char* pathLabels)
 			{
 				unsigned char byteFile[1];
 				f.read(reinterpret_cast<char*>(byteFile), 1);
-				this->streamImageLabels.push_back(unsigned char(*byteFile));
+				this->streamImageLabels.push_back(unsigned char(byteFile[0]));
 			}
 
 			this->list_images.push_back(new Image(this->rows, this->columns, this->streamImageLabels));
@@ -109,7 +113,7 @@ DataStream::DataStream(const char* pathImage, const char* pathLabels)
 DataStream::~DataStream() { this->list_images.clear(); }
 
 
-std::vector<Image*> DataStream::getListOfImages()
+std::vector<Image*>& DataStream::getListOfImages()
 {
-	return std::vector<Image*>();
+	return this->list_images;
 }

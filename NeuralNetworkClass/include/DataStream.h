@@ -3,6 +3,8 @@
 #include <fstream>
 #include <ostream>
 #include <iostream>
+#include <iomanip>
+
 
 struct Color
 {
@@ -35,7 +37,7 @@ public:
 	~DataStream();
 
 
-	std::vector<Image*> getListOfImages();
+	std::vector<Image*>& getListOfImages();
 
 private:
 	int magic_number;

@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <iomanip>
 #include <vector>
 #include <cstdlib>
 
@@ -21,9 +22,14 @@ int main()
 
     
     test3();    /// refactoring code if needed to run with window /// option 1 : create a test3 as a <!> class <!> and what to have
-    DataStream trainImages("testData/train-images.idx3-ubyte", "testData/train-labels.idx1-ubyte");
-    DataStream testImages("testData/t10k-images.idx3-ubyte", "testData/t10k-labels.idx1-ubyte");
+   // DataStream trainImages("testData/train-images.idx3-ubyte", "testData/train-labels.idx1-ubyte");
+    DataStream test("testData/t10k-images.idx3-ubyte", "testData/t10k-labels.idx1-ubyte");
 
+    std::vector<Image*> pictures = test.getListOfImages();
+    std::vector<unsigned int> picture = test.getListOfImages()[0]->getColor();
+
+
+    progWindow->pushImage(pictures);
 
     while(running)
     {
@@ -41,7 +47,6 @@ int main()
         Sleep(10); // for now to not overstress cpu
     }
 
-   
 
 
     return 0;

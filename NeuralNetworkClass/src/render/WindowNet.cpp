@@ -18,8 +18,9 @@ HDC hdc;
 Input input = {};
 
 #include "renderer.cpp"
-unsigned int background = 0;
-unsigned int valBackground = 0;
+unsigned int background = 0xffffff;
+
+bool renderOne = true;
 float deltaTime = 0.0f;
 LARGE_INTEGER frame_begin_time;
 LARGE_INTEGER frame_end_time;
@@ -176,11 +177,17 @@ void WindowNet::render()
 	{
 		input.buttons[i].changed = false;
 	}
-	 clear_screen(background);
-	 //draw_rect_in_pixels(50, 50, 200, 500, 0x00ff22);
-	 
-	 processInputs(deltaTime);
 
+	processInputs(deltaTime);
+	
+	
+	clear_screen(background);
+	//draw_rect_in_pixels(50, 50, 200, 500, 0x00ff22);
+
+
+
+	renderImage(10, 10, 10);
+	
 	// draw_rect(3, 3, 3, 3, 0x114522);
 	// draw_rect(0, 0, 2, 2, 0x223377);
 
@@ -190,6 +197,8 @@ void WindowNet::render()
 
 	deltaTime = (float)(frame_end_time.QuadPart - frame_begin_time.QuadPart) / performance_frequency;
 	frame_begin_time = frame_end_time;
+
+
 }
 
 
@@ -198,15 +207,70 @@ void WindowNet::render()
 {
 	 // if(is_down(BUTTON_DOWN) player_pos_y-=0.1*dt;
 
-	if (is_down(BUTTON_UP))
-		colorUp();
+	 if (is_down(BUTTON_UP))
+	 {
+		 this->valImage++;
+	 }
 
+	 if (is_down(BUTTON_DOWN))
+	 {
+		 renderOne = true;
+	 }
 	if (is_down(BUTTON_ESC))
 		PostQuitMessage(0);
 }
 
- void WindowNet::colorUp()
+
+ void WindowNet::pushImage(std::vector <Image*> imageList)
  {
-	 valBackground += 1;
-	 background = valBackground + (valBackground << 8) + (valBackground << 16);
+	 _imageList = imageList;
  }
+
+ void WindowNet::renderImage(int xPos, int yPos, int sizeUp)
+ {
+	 /// y=0, y1=10, x=0 , x1=10, one pixel sizeUp 10x;
+	 /// send pixelSizeUp to render in position XY;
+	 /// new y = y * sizeUp, new y1 = y*sizeUp+sizeUp, x(...) 
+	 /// check if x or y are greater at window width/height. resize request. image.width/height * sizeUp < window.width/heigth
+	 /// (...).render_in_pixel(xPos+x,xPos+x1,yPos+y,yPos+y1, _imageList[valImage]->getColor();
+	 
+	 int width = this->_imageList[valImage]->width;
+	 int height = this->_imageList[valImage]->height;
+	 int size = sizeUp;
+
+	 int imageSizeX = width * size;
+	 int imageSizeY =render_state.height;
+
+	 this->imageStream = _imageList[valImage]->getColor();
+	 /*
+	 //check if sizeUp is not too large
+	 if (!(width * size + xPos < render_state.width))
+	 {
+		 size = (render_state.width - xPos) / width;			/// 10*10+10<100  /// 100+10<100 /// 110<100 <!> /// (100(monit wisth) - 10(xyPos)) / 10(how many pixels to render) = size 9
+	 }
+		 
+	if ( !(height * size + yPos < render_state.height))
+	{
+		size = (render_state.height - yPos) / height;
+	}
+	*/
+
+	size_t count = 0;
+	 for(size_t y=0;y<height;y++)
+	 {
+		 int y1New =imageSizeY - yPos - (y * size);
+		 int yNew =y1New - size;
+		for (size_t x = 0; x < width; x++)
+		{
+			int xNew = x*size + xPos;
+			int x1New = xNew + size;
+
+			unsigned int color = this->imageStream[count];
+			draw_rect_in_pixels(xNew,yNew,x1New, y1New, color);
+			count++;
+		}
+
+	 }
+
+ }
+
