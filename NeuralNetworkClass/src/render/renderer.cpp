@@ -29,7 +29,7 @@ INTERNAL void draw_rect_in_pixels(s32 x0, s32 y0, s32 x1, s32 y1, u32 color) {
 }
 
 INTERNAL void draw_rect(float x, float y, float half_size_x, float half_size_y, u32 color) {
-	// change to pixel
+	// from unit change to pixel
 
 	x *= render_state.width * render_scale;
 	y *= render_state.height * render_scale;

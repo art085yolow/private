@@ -18,18 +18,20 @@ int main()
 {
     std::cout << "Hello World!\n";
    
-    WindowNet* progWindow = new WindowNet();
 
+    WindowNet* progWindow = new WindowNet();
     
     test3();    /// refactoring code if needed to run with window /// option 1 : create a test3 as a <!> class <!> and what to have
    // DataStream trainImages("testData/train-images.idx3-ubyte", "testData/train-labels.idx1-ubyte");
     DataStream test("testData/t10k-images.idx3-ubyte", "testData/t10k-labels.idx1-ubyte");
 
+    // take one image for render test
     std::vector<Image*> pictures = test.getListOfImages();
     std::vector<unsigned int> picture = test.getListOfImages()[0]->getColor();
+    
+    progWindow->imageStream = test.getListOfImages()[0]->getColor();
 
-
-    progWindow->pushImage(pictures);
+    //progWindow->pushImage(pictures);
 
     while(running)
     {
@@ -44,7 +46,7 @@ int main()
         
         progWindow->render();
 
-        Sleep(10); // for now to not overstress cpu
+        
     }
 
 

@@ -28,7 +28,7 @@ std::vector<unsigned int> Image::getColor()
 	std::vector<unsigned int> colorTab;
 	for (size_t i = 0, tt = this->m_char.size(); i<tt; i++)
 	{
-		unsigned int gray = m_char[i] + (m_char[i] << 8) + (m_char[i] << 16) + (0<<24);
+		unsigned int gray = (255 - m_char[i]) + ((255 - m_char[i]) << 8) + ((255 - m_char[i]) << 16) + (0<<24);
 		colorTab.push_back(unsigned int(gray));
 	}
 	return colorTab;

@@ -18,7 +18,6 @@ HDC hdc;
 Input input = {};
 
 #include "renderer.cpp"
-unsigned int background = 0xffffff;
 
 bool renderOne = true;
 float deltaTime = 0.0f;
@@ -184,9 +183,8 @@ void WindowNet::render()
 	clear_screen(background);
 	//draw_rect_in_pixels(50, 50, 200, 500, 0x00ff22);
 
-
-
-	renderImage(10, 10, 10);
+	// range -50 to 50
+	renderImage(0.0f, 0.0f, 1.0f, 28, 28, this->imageStream);
 	
 	// draw_rect(3, 3, 3, 3, 0x114522);
 	// draw_rect(0, 0, 2, 2, 0x223377);
@@ -226,35 +224,25 @@ void WindowNet::render()
 	 _imageList = imageList;
  }
 
- void WindowNet::renderImage(int xPos, int yPos, int sizeUp)
+ void WindowNet::renderImage(float xPos, float yPos, float size, int width, int height, std::vector<unsigned int> image)
  {
 	 /// y=0, y1=10, x=0 , x1=10, one pixel sizeUp 10x;
 	 /// send pixelSizeUp to render in position XY;
 	 /// new y = y * sizeUp, new y1 = y*sizeUp+sizeUp, x(...) 
 	 /// check if x or y are greater at window width/height. resize request. image.width/height * sizeUp < window.width/heigth
 	 /// (...).render_in_pixel(xPos+x,xPos+x1,yPos+y,yPos+y1, _imageList[valImage]->getColor();
-	 
+	 /*
 	 int width = this->_imageList[valImage]->width;
 	 int height = this->_imageList[valImage]->height;
-	 int size = sizeUp;
+	 int size = size;
 
 	 int imageSizeX = width * size;
 	 int imageSizeY =render_state.height;
 
 	 this->imageStream = _imageList[valImage]->getColor();
+	 
+	 */
 	 /*
-	 //check if sizeUp is not too large
-	 if (!(width * size + xPos < render_state.width))
-	 {
-		 size = (render_state.width - xPos) / width;			/// 10*10+10<100  /// 100+10<100 /// 110<100 <!> /// (100(monit wisth) - 10(xyPos)) / 10(how many pixels to render) = size 9
-	 }
-		 
-	if ( !(height * size + yPos < render_state.height))
-	{
-		size = (render_state.height - yPos) / height;
-	}
-	*/
-
 	size_t count = 0;
 	 for(size_t y=0;y<height;y++)
 	 {
@@ -271,6 +259,39 @@ void WindowNet::render()
 		}
 
 	 }
+	 */
 
+
+	 // rebuild to use draw_rect(); using -x/x -y/y location 
+
+	 // background for image
+	 
+	 unsigned int backgroundImage;
+	 if (this->background > 0xcccccc)
+	 {
+		 backgroundImage = 0x000000;
+	 }
+	 else {
+		 backgroundImage = 0xffffff;
+	 }
+	 // sizeForBackground (width*size+2*size)/2  --- 
+	 // x -= (width*size - nrPixel*size)/2
+	 // y += (height*size - nrPixel*size)/2
+
+	 float y = yPos + (height * size)/4;
+	 float x = xPos - (width * size)/ 4;
+	
+	 size_t countPix = 0;
+
+	 for (size_t y_height = 0; y_height < height; y_height++)
+	 {
+
+		 for (size_t x_width = 0; x_width < width; x_width++)
+		 {
+			 draw_rect(x + ((x_width+1) * size) / 2, y - ((y_height +1) * size) / 2, size, size, image[countPix]);
+			 countPix++;
+		 }
+	 }
+	 
  }
 
