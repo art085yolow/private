@@ -7,6 +7,7 @@
 #include "include/render/WindowNet.h"
 #include "src/utils.cpp"
 #include "include/DataStream.h"
+#include "include/RNN.h"
 
 GLOBAL_VARIABLE bool running = true;
 
@@ -25,13 +26,20 @@ int main()
    // DataStream trainImages("testData/train-images.idx3-ubyte", "testData/train-labels.idx1-ubyte");
     DataStream test("testData/t10k-images.idx3-ubyte", "testData/t10k-labels.idx1-ubyte");
 
+    RNN testedNetwork(progWindow,test);
+
+    testedNetwork.setNetwork();
+    testedNetwork.trainNetwork();
     // take one image for render test
-    std::vector<Image*> pictures = test.getListOfImages();
-    std::vector<unsigned int> picture = test.getListOfImages()[0]->getColor();
+    //std::vector<Image*> pictures = test.getListOfImages();
+    //Image* oneImage = pictures[0];
+    //std::vector<unsigned int> picture = oneImage->getColor();
     
-    progWindow->imageStream = test.getListOfImages()[0]->getColor();
+    //progWindow->imageStream = test.getListOfImages()[0]->getColor();
 
     //progWindow->pushImage(pictures);
+
+    
 
     while(running)
     {
@@ -42,8 +50,12 @@ int main()
             running = false;
         }
 
+        progWindow->clear_screen();
         // Render
         
+        
+
+
         progWindow->render();
 
         

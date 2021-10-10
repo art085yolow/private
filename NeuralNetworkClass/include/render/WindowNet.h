@@ -17,6 +17,8 @@ public:
 
 	void windowSize(HWND hWnd);
 
+	void clear_screen(unsigned int color = 0xdddddd);
+
 	bool ProcessMsg();
 
 	// render buffor -- TODO / re-organize

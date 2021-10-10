@@ -64,18 +64,23 @@ void NeuralNetwork::setYPredicted(std::vector<double> testOut)
 }
 
 void NeuralNetwork::backProb()
-{
-	std::vector<double*> calcError;
-
-	std::vector<Neuron*> currentNeuronsInLayer;
+{			///			---			REFACTOR THE HOLY PROCESS OF CALCULATION			---				///
+			// main problem is the size of 'error' list from last layer to next //
+			// (784x16x16x10) it is calculating just 10 times but not for every weights!! //
 
 	// moving from last layer to first
-	for (size_t i = 0, tl = this->NeuralNetworkLayers.size() - 1, j = 0, tn = this->NeuralNetworkLayers[tl - i]->getNeuronsFromLayer().size(); i < tl; i++)
+	for (size_t i = 0, tl = this->NeuralNetworkLayers.size() - 1; i < tl; i++)
 	{
+		std::vector<double*> calcError;
+
 		std::vector<Neuron*> currentLayer = this->NeuralNetworkLayers[tl-i]->getNeuronsFromLayer();
 
-		for (j = 0; j < tn; j++)
+
+
+		for (size_t j = 0, tn = currentLayer.size(); j < tn; j++)
 		{
+			// here is the problem in calculation -- rework needed for the loops
+
 			std::vector<double*> weightOld = currentLayer[j]->getWeightVec();
 			std::vector<Neuron*> inputNeuronsForCurentLayer = currentLayer[j]->getInputNeuronsVec();
 
@@ -93,23 +98,20 @@ void NeuralNetwork::backProb()
 
 			// bias
 			currentLayer[j]->setBias(currentLayer[j]->getBias() - ratioLearn * *errors[j]);
-			inputNeuronsForCurentLayer.clear();
-			weightOld.clear();
 		}
 		// change layer to L-1
 		currentLayer = this->NeuralNetworkLayers[tl - i - 1]->getNeuronsFromLayer();
 
-		for (j = 0; j < currentLayer.size(); j++)
+		for (size_t j = 0; j < currentLayer.size(); j++)
 		{
 			// error for L-1 for next calculation
 			*calcError[j] = currentLayer[j]->getDerivativeAxon() * *calcError[j];
 		}
 
 		this->errors = calcError;
-		calcError.clear();
-		currentLayer.clear();
+	
 	}
-	currentNeuronsInLayer.clear();
+	this->errors.clear();
 }
 
 void NeuralNetwork::setRatio(double ratio)
@@ -155,7 +157,6 @@ void NeuralNetwork::calculateTotalError()
 		}
 	}
 	calcError.clear();
-	currentNeuronInLayer.clear();
 }
 
 void NeuralNetwork::setError()
@@ -168,7 +169,6 @@ void NeuralNetwork::setError()
 		double errorOut = 0.5 * ((this->y[i] - layerOutput[i]->getAxon()) * (this->y[i] - layerOutput[i]->getAxon()));
 		this->totalError += errorOut;
 	}
-	layerOutput.clear();
 }
 
 void NeuralNetwork::setInputsOutputs(std::vector<double*> inputs, std::vector<double*> outputs)
@@ -191,6 +191,5 @@ void NeuralNetwork::setInputsOutputs(std::vector<double*> inputs, std::vector<do
 		}
 
 	}
-	inputLayer.clear();
-	outputLayer.clear();
+	
 }

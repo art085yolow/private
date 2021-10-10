@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\RNN.cpp" />
     <ClCompile Include="src\DataStream.cpp" />
     <ClCompile Include="src\controls.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -169,6 +170,7 @@
     <ClInclude Include="include\Neuralnetwork.h" />
     <ClInclude Include="include\Neuron.h" />
     <ClInclude Include="include\render\WindowNet.h" />
+    <ClInclude Include="include\RNN.h" />
     <ClInclude Include="include\SAEnum.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

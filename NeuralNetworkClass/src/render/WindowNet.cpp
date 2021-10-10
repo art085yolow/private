@@ -127,6 +127,18 @@ void WindowNet::windowSize(HWND hWnd) // later delete
 		render_state.memory = VirtualAlloc(0, buffer_size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 }
 
+void WindowNet::clear_screen(unsigned int color)
+{
+	u32* pixel = (u32*)render_state.memory;
+	for (s32 y = 0; y < render_state.height; y++)
+	{
+		for (s32 x = 0; x < render_state.width; x++)
+		{
+			*pixel++ = color;
+		}
+	}
+}
+
 bool WindowNet::ProcessMsg()
 {
 	MSG msg = {};
@@ -179,12 +191,10 @@ void WindowNet::render()
 
 	processInputs(deltaTime);
 	
-	
-	clear_screen(background);
 	//draw_rect_in_pixels(50, 50, 200, 500, 0x00ff22);
 
 	// range -50 to 50
-	renderImage(0.0f, 0.0f, 1.0f, 28, 28, this->imageStream);
+	//renderImage(0.0f, 0.0f, 1.0f, 28, 28, this->imageStream);
 	
 	// draw_rect(3, 3, 3, 3, 0x114522);
 	// draw_rect(0, 0, 2, 2, 0x223377);

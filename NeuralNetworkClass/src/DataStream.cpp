@@ -34,6 +34,12 @@ std::vector<unsigned int> Image::getColor()
 	return colorTab;
 }
 
+double Image::getDoubleValue(unsigned int nrOnList)
+{
+	double value = m_char[nrOnList] / 255;
+	return value;
+}
+
 Image::~Image() { }
 
 DataStream::DataStream() : magic_number(0), number_Im_Lab(0), rows(0), columns(0){}
@@ -116,4 +122,9 @@ DataStream::~DataStream() { this->list_images.clear(); }
 std::vector<Image*>& DataStream::getListOfImages()
 {
 	return this->list_images;
+}
+
+std::vector<unsigned char>& DataStream::getListOfLabels()
+{
+	return this->streamImageLabels;
 }

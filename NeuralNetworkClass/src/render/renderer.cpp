@@ -1,15 +1,5 @@
 GLOBAL_VARIABLE float render_scale = 0.01f;
 
-INTERNAL void clear_screen(u32 color) {
-	u32* pixel = (u32*)render_state.memory;
-	for (s32 y = 0; y < render_state.height; y++)
-	{
-		for (s32 x = 0; x < render_state.width; x++)
-		{
-			*pixel++ = color;
-		}
-	}
-}
 
 INTERNAL void draw_rect_in_pixels(s32 x0, s32 y0, s32 x1, s32 y1, u32 color) {
 	

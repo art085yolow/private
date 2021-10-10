@@ -26,6 +26,7 @@ struct Image
 	Image(int width, int height, std::vector<unsigned char> val);
 	
 	std::vector<unsigned int> getColor();
+	double getDoubleValue(unsigned int nrOnList);
 	~Image();
 };
 
@@ -38,6 +39,7 @@ public:
 
 
 	std::vector<Image*>& getListOfImages();
+	std::vector<unsigned char>& getListOfLabels();
 
 private:
 	int magic_number;
