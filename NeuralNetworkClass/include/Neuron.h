@@ -52,10 +52,10 @@
 		double getBias();
 
 		// get vector of weight of neurons connected with this neuron
-		std::vector<double*> getWeightVec();
+		std::vector<double*>& getWeightVec();
 
 		// get vector of input-neurons connected with this neuron
-		std::vector<Neuron*> getInputNeuronsVec();
+		std::vector<Neuron*>& getInputNeuronsVec();
 
 	private:
 		SummationEnum typSum = SummationEnum::Suma;

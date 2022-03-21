@@ -33,7 +33,7 @@ void Layer::addNeuronToLayer(std::vector<Neuron*> synapseIn, double* out, Summat
 }
 
 
-std::vector<Neuron*> Layer::getNeuronsFromLayer()
+std::vector<Neuron*>& Layer::getNeuronsFromLayer()
 {
 	return this->neuronsInLayer;
 }

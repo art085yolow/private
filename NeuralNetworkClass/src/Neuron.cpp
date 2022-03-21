@@ -177,12 +177,12 @@ double Neuron::getBias()
 	return this->bias;
 }
 
-std::vector<double*> Neuron::getWeightVec()
+std::vector<double*>& Neuron::getWeightVec()
 {
 	return this->_weights;
 }
 
-std::vector<Neuron*> Neuron::getInputNeuronsVec()
+std::vector<Neuron*>& Neuron::getInputNeuronsVec()
 {
 	return this->inputsDendrites;
 }

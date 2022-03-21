@@ -36,7 +36,8 @@ std::vector<unsigned int> Image::getColor()
 
 double Image::getDoubleValue(unsigned int nrOnList)
 {
-	double value = m_char[nrOnList] / 255;
+	double value;
+	value = m_char[nrOnList] / 255.0;
 	return value;
 }
 

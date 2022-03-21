@@ -18,7 +18,7 @@
 		void addNeuronToLayer(std::vector<Neuron*> synapseIn, double* out, SummationEnum typSum = SummationEnum::Suma, ActivationEnum typActiv = ActivationEnum::Sigm);
 
 		// get vector of neuronsfrom this layer
-		std::vector<Neuron*> getNeuronsFromLayer();
+		std::vector<Neuron*>& getNeuronsFromLayer();
 	
 	private:
 		std::vector<Neuron*> neuronsInLayer;

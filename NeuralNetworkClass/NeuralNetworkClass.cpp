@@ -14,12 +14,12 @@ GLOBAL_VARIABLE bool running = true;
 void test1();
 void test2();
 void test3();
+void test4();
 
 int main()
 {
     std::cout << "Hello World!\n";
    
-
     WindowNet* progWindow = new WindowNet();
     
     test3();    /// refactoring code if needed to run with window /// option 1 : create a test3 as a <!> class <!> and what to have
@@ -143,9 +143,9 @@ void test2()
     NeuralNetwork nn;
     nn.createLayersOfNeurons(in, out, 1, 2);
 
-    std::vector<double> yOut;
-    yOut.push_back(double(0.01));
-    yOut.push_back(double(0.99));
+    std::vector<double*> yOut;
+    yOut.push_back(new double(0.01));
+    yOut.push_back(new double(0.99));
 
     nn.setYPredicted(yOut);
     nn.setRatio(0.5);
@@ -283,5 +283,28 @@ void test3()
     color += rgb << 8;
     std::cout << color << std::endl; // 65314
     */
+                    // -------------            Denied          ------------------
+                    // -------------    rework/rebuild project  ------------------
+
+    // Problems::
+    //  - too lorge needed memory
+    //  - controls the poiters and vectors
+}
+
+void test4()
+{
+
+        /// Idea project:
+    /// replace vectors to stringstream
+    /// simplified code
+    /// delete unnessery files
+    /// read/write file 
+    /// 
+    /// Needed info:
+    /// 
+    /// the way of work stringstream
+    /// selecting position in stringstream
+    /// design the network calculation/reading/writing
+    /// 
 
 }

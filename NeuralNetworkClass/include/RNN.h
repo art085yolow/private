@@ -24,6 +24,7 @@ private:
 	NeuralNetwork RNNnet;
 	std::vector<double*> inputs;
 	std::vector<double*> outputs;
+	std::vector<double*> yPredict;
 
 	unsigned int sampling =0;
 	unsigned int numberTest;

@@ -32,9 +32,11 @@ void RNN::setNetwork()
 		for (size_t i = 0; i < 10; i++)
 		{
 			this->outputs.push_back(new double());
+			this->yPredict.push_back(new double());
 		}
 
-		RNNnet.createLayersOfNeurons(this->inputs, this->outputs, 2, 16);
+		this->RNNnet.createLayersOfNeurons(this->inputs, this->outputs, 2, 16);
+		this->RNNnet.setYPredicted(this->yPredict);
 
 	}
 
@@ -58,21 +60,19 @@ void RNN::trainNetwork()
 			// need sort function in NeuralNetwork. 
 
 			// set the correct 'y' answer
-			unsigned int yLab = this->data.getListOfLabels()[this->sampling];
-			std::vector<double> yResult;
+			this->correctAnswer = this->data.getListOfLabels()[this->sampling];
 			// TODO loop for output layer
 			for (size_t g = 0; g < 10; g++)
 			{
-				if(g==yLab)
-				{
-					yResult.push_back(1.0);
-				}
-				else
-				{
-					yResult.push_back(0.0);
-				}
+					if (g == correctAnswer)
+					{
+						*this->yPredict[g]= 1.0;
+					}
+					else
+					{
+						*this->yPredict[g]= 0.0;
+					}
 			}
-			this->RNNnet.setYPredicted(yResult);
 
 			// calculate error output
 			this->RNNnet.calculateTotalError();
