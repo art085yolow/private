@@ -4,12 +4,12 @@
 #include <cstdlib>
 
 #include "include/Neuralnetwork.h"
-#include "include/render/WindowNet.h"
+//#include "include/render/WindowNet.h"
 #include "src/utils.cpp"
 #include "include/DataStream.h"
-#include "include/RNN.h"
+//#include "include/RNN.h"
 
-GLOBAL_VARIABLE bool running = true;
+//GLOBAL_VARIABLE bool running = true;
 
 void test1();
 void test2();
@@ -19,27 +19,27 @@ void test4();
 int main()
 {
     std::cout << "Hello World!\n";
-   
-    WindowNet* progWindow = new WindowNet();
-    
-    test3();    /// refactoring code if needed to run with window /// option 1 : create a test3 as a <!> class <!> and what to have
+
+    //WindowNet* progWindow = new WindowNet();
+
+    test1();    /// refactoring code if needed to run with window /// option 1 : create a test3 as a <!> class <!> and what to have
    // DataStream trainImages("testData/train-images.idx3-ubyte", "testData/train-labels.idx1-ubyte");
-    DataStream test("testData/t10k-images.idx3-ubyte", "testData/t10k-labels.idx1-ubyte");
+    //DataStream test("testData/t10k-images.idx3-ubyte", "testData/t10k-labels.idx1-ubyte");
 
-    RNN testedNetwork(progWindow,test);
+    //RNN testedNetwork(progWindow,test);
 
-    testedNetwork.setNetwork();
-    testedNetwork.trainNetwork();
+    //testedNetwork.setNetwork();
+    //testedNetwork.trainNetwork();
     // take one image for render test
     //std::vector<Image*> pictures = test.getListOfImages();
     //Image* oneImage = pictures[0];
     //std::vector<unsigned int> picture = oneImage->getColor();
-    
+
     //progWindow->imageStream = test.getListOfImages()[0]->getColor();
 
     //progWindow->pushImage(pictures);
 
-    
+    /*
 
     while(running)
     {
@@ -52,52 +52,52 @@ int main()
 
         progWindow->clear_screen();
         // Render
-        
-        
+
+
 
 
         progWindow->render();
 
-        
+
     }
 
 
-
+    */
     return 0;
-}
+};
 
 void test1()
 {
 /*               ETAP PIEWRWSZY -- STAGE ONE
         ///             FEEDFORWARD                ///
  */
-    std::vector<double*> input, output;
+    std::vector<double> input, output;
 
     for (size_t i = 0; i < 5; i++)
     {
-        input.push_back(new double(i + 2.0));
+        input.push_back(double(i + 2.0));
     }
 
     for (size_t i = 0; i < 3; i++)
     {
-        output.push_back(new double);
+        output.push_back(double(0.0));
     }
 
-    NeuralNetwork net;
+    NeuralNetwork net(input, output, 1, 2);
 
-    net.createLayersOfNeurons(input, output, 1, 2);
+    //net.createLayersOfNeurons(input, output, 1, 2);
 
-    net.process();
+    // net.process();
 
-    for (double* d : input)
+    for (double d : input)
     {
-        std::cout << "Wejscie - input " << *d << std::endl;
+        std::cout << "Wejscie - input " << d << std::endl;
     }
     std::cout<<std::endl;
 
-    for (double* w : output)
+    for (double w : output)
     {
-        std::cout << "Wyjscia - output " << *w << std::endl;
+        std::cout << "Wyjscia - output " << w << std::endl;
     }
 
 }
@@ -120,7 +120,7 @@ void test2()
     */
 
     /// przygotowanie -- preparing
-
+    /*
     std::vector<double*> in;
     in.push_back(new double(0.05));
     in.push_back(new double(0.1));
@@ -239,7 +239,7 @@ void test2()
     ///         example net --- correct!!! done!!!
     /// </summary>
     /// <returns></returns>
-
+    */
 }
 
 void test3()
@@ -307,4 +307,19 @@ void test4()
     /// design the network calculation/reading/writing
     /// 
 
+
+    ///
+    /// 2022-04-09
+    /// what TODO
+    /// 1. modifikacja funkcji Backpropagation
+    /// 2. funkcja process ma sprawdzic czy memobit nie jest odwrocone
+    /// 3. modyfikacja funkcji obliczania bledu
+    ///  4. do sprawdzenia i modyfikacji:
+    ///         - void NeuralNetwork::calculateTotalError() / neuralnetwork.cpp
+    ///         - void NeuralNetwork::setInputsOutputs(
+    ///         - void NeuralNetwork::setError()
+    ///         - void NeuralNetwork::backProb()
+    /// 
+    /// 2022-05-06
+    ///  zmienic pointery na referemcje
 }

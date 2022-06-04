@@ -80,7 +80,7 @@ DataStream::DataStream(const char* pathImage, const char* pathLabels)
 				this->streamImageLabels.push_back(unsigned char(byteFile[0]));
 			}
 
-			this->list_images.push_back(new Image(this->rows, this->columns, this->streamImageLabels));
+			this->list_images.push_back(Image(this->rows, this->columns, this->streamImageLabels));
 		}
 	
 		this->streamImageLabels.clear();
@@ -120,7 +120,7 @@ DataStream::DataStream(const char* pathImage, const char* pathLabels)
 DataStream::~DataStream() { this->list_images.clear(); }
 
 
-std::vector<Image*>& DataStream::getListOfImages()
+std::vector<Image>& DataStream::getListOfImages()
 {
 	return this->list_images;
 }

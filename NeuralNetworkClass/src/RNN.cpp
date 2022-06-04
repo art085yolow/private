@@ -24,19 +24,21 @@ void RNN::setNetwork()
 {
 	if (!this->data.getListOfImages().empty())
 	{
-		for (size_t i = 0, tt = this->data.getListOfImages()[0]->width * this->data.getListOfImages()[0]->height; i < tt; i++)
+		for (size_t i = 0, tt = this->data.getListOfImages()[0].width * this->data.getListOfImages()[0].height; i < tt; i++)
 		{
-			this->inputs.push_back(new double());
+			this->inputs.push_back(double(0.0));
 		}
 
 		for (size_t i = 0; i < 10; i++)
 		{
-			this->outputs.push_back(new double());
-			this->yPredict.push_back(new double());
+			this->outputs.push_back(double(0.0));
+			this->yPredict.push_back(double(0.0));
 		}
 
-		this->RNNnet.createLayersOfNeurons(this->inputs, this->outputs, 2, 16);
-		this->RNNnet.setYPredicted(this->yPredict);
+		NeuralNetwork dotnet(this->inputs, this->outputs, 2, 16);
+			//dotnet.createLayersOfNeurons(this->inputs, this->outputs, 2, 16);
+			this->RNNnet = &dotnet;
+		this->RNNnet->setYPredicted(this->yPredict);
 
 	}
 
@@ -51,12 +53,12 @@ void RNN::trainNetwork()
 		for (size_t i = 0; i < 10; i++)
 		{
 			// send image list to network,process and calculate error
-			for (size_t y = 0, tt = this->data.getListOfImages()[this->sampling]->m_char.size(); y < tt; y++)
+			for (size_t y = 0, tt = this->data.getListOfImages()[this->sampling].m_char.size(); y < tt; y++)
 			{
-				*this->inputs[y] = this->data.getListOfImages()[this->sampling]->getDoubleValue(y);
+				this->inputs[y] = this->data.getListOfImages()[this->sampling].getDoubleValue(y);
 			}
 
-			this->RNNnet.process();
+			this->RNNnet->process();
 			// need sort function in NeuralNetwork. 
 
 			// set the correct 'y' answer
@@ -66,19 +68,19 @@ void RNN::trainNetwork()
 			{
 					if (g == correctAnswer)
 					{
-						*this->yPredict[g]= 1.0;
+						this->yPredict[g]= 1.0;
 					}
 					else
 					{
-						*this->yPredict[g]= 0.0;
+						this->yPredict[g]= 0.0;
 					}
 			}
 
 			// calculate error output
-			this->RNNnet.calculateTotalError();
+			this->RNNnet->calculateTotalError();
 
 		}
-		this->RNNnet.backProb();
+		this->RNNnet->backProb();
 	}
 }
 
@@ -88,5 +90,5 @@ void RNN::testNetwork()
 
 void RNN::render()
 {
-	this->window->renderImage(0.0f, 0.0f, 1.0f, this->data.getListOfImages()[0]->width, this->data.getListOfImages()[0]->height, this->data.getListOfImages()[sampling]->getColor());
+	this->window->renderImage(0.0f, 0.0f, 1.0f, this->data.getListOfImages()[0].width, this->data.getListOfImages()[0].height, this->data.getListOfImages()[sampling].getColor());
 }

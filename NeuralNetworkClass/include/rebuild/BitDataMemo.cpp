@@ -72,9 +72,9 @@ void BitDataMemo::reverse()
 		this->setValue((this->indexSizeInMemory - 1 - indexPos), toRevers.getValue(indexPos));
 	}
 
-	// revesing true
+	// revesing 
 
-	this->reversedState = true;
+	this->reversedState = !this->reversedState;
 
 }
 

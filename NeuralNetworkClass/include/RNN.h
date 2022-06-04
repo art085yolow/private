@@ -3,7 +3,8 @@
 #include "DataStream.h"
 #include "render/WindowNet.h"
 
-class RNN :  NeuralNetwork {
+class RNN 
+{
 public:
 	RNN();
 	RNN(WindowNet* progWindow, DataStream _data);
@@ -21,10 +22,10 @@ public:
 private:
 	WindowNet* window;
 	DataStream data;
-	NeuralNetwork RNNnet;
-	std::vector<double*> inputs;
-	std::vector<double*> outputs;
-	std::vector<double*> yPredict;
+	NeuralNetwork *RNNnet = nullptr;
+	std::vector<double> inputs;
+	std::vector<double> outputs;
+	std::vector<double> yPredict;
 
 	unsigned int sampling =0;
 	unsigned int numberTest;

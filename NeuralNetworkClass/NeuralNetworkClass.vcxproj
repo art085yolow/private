@@ -148,7 +148,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="include\rebuild\BitDataMemo.cpp" />
-    <ClCompile Include="src\RNN.cpp" />
     <ClCompile Include="src\DataStream.cpp" />
     <ClCompile Include="src\controls.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -157,19 +156,16 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="src\render\WindowNet.cpp" />
-    <ClCompile Include="src\Layer.cpp" />
     <ClCompile Include="src\Neuralnetwork.cpp" />
     <ClCompile Include="NeuralNetworkClass.cpp" />
-    <ClCompile Include="src\Neuron.cpp" />
+    <ClCompile Include="src\RNN.cpp" />
     <ClCompile Include="src\utils.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\DataStream.h" />
-    <ClInclude Include="include\Layer.h" />
     <ClInclude Include="include\Neuralnetwork.h" />
-    <ClInclude Include="include\Neuron.h" />
     <ClInclude Include="include\rebuild\BitDataMemo.h" />
     <ClInclude Include="include\render\WindowNet.h" />
     <ClInclude Include="include\RNN.h" />

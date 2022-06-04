@@ -20,10 +20,10 @@ struct Image
 {
 	int width;
 	int height;
-	std::vector<unsigned char> m_char;
+	std::vector<unsigned char> m_char; //  ->string
 
 	Image();
-	Image(int width, int height, std::vector<unsigned char> val);
+	Image(int width, int height, std::vector<unsigned char> val); // vec -> string
 	
 	std::vector<unsigned int> getColor();
 	double getDoubleValue(unsigned int nrOnList);
@@ -38,7 +38,7 @@ public:
 	~DataStream();
 
 
-	std::vector<Image*>& getListOfImages();
+	std::vector<Image>& getListOfImages();
 	std::vector<unsigned char>& getListOfLabels();
 
 private:
@@ -47,6 +47,6 @@ private:
 	int rows, columns;
 
 	std::vector<unsigned char> streamImageLabels;
-	std::vector<Image*> list_images;
+	std::vector<Image> list_images;
 
 };
