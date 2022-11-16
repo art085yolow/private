@@ -6,10 +6,10 @@ linki :
 
 
 # Attempt 1
-Description:
-Class construction based on lists of pointers and code functions corresponding to data.
-Results:
-Large memory leak, misinterpretation of operation and handling of pointers.
+  Description:
+  Class construction based on lists of pointers and code functions corresponding to data.
+  Results:
+  Large memory leak, misinterpretation of operation and handling of pointers.
 
 # Attempt 2
 Description:
