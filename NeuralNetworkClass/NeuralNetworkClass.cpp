@@ -22,7 +22,7 @@ int main()
 
     //WindowNet* progWindow = new WindowNet();
 
-    test1();    /// refactoring code if needed to run with window /// option 1 : create a test3 as a <!> class <!> and what to have
+    test4();    /// refactoring code if needed to run with window /// option 1 : create a test3 as a <!> class <!> and what to have
    // DataStream trainImages("testData/train-images.idx3-ubyte", "testData/train-labels.idx1-ubyte");
     //DataStream test("testData/t10k-images.idx3-ubyte", "testData/t10k-labels.idx1-ubyte");
 
@@ -73,12 +73,12 @@ void test1()
  */
     std::vector<double> input, output;
 
-    for (size_t i = 0; i < 5; i++)
+    for (size_t i = 0; i < 2; i++)
     {
         input.push_back(double(i + 2.0));
     }
 
-    for (size_t i = 0; i < 3; i++)
+    for (size_t i = 0; i < 2; i++)
     {
         output.push_back(double(0.0));
     }
@@ -87,7 +87,7 @@ void test1()
 
     //net.createLayersOfNeurons(input, output, 1, 2);
 
-    // net.process();
+     net.process();
 
     for (double d : input)
     {
@@ -99,6 +99,10 @@ void test1()
     {
         std::cout << "Wyjscia - output " << w << std::endl;
     }
+
+    // 
+
+
 
 }
 
@@ -322,4 +326,62 @@ void test4()
     /// 
     /// 2022-05-06
     ///  zmienic pointery na referemcje
+    /// 
+    
+    std::vector<double> input, output;
+
+    input.push_back(double(0.05));
+    input.push_back(double(0.1));
+
+    for (size_t i = 0; i < 2; i++)
+    {
+        output.push_back(double(0.0));
+    }
+
+    NeuralNetwork net(input, output, 1, 2);
+
+    net.process();
+
+    for (double d : input)
+    {
+        std::cout << "Wejscie - input " << d << std::endl;
+    }
+    std::cout << std::endl;
+
+    for (double w : output)
+    {
+        std::cout << "Wyjscia - output " << w << std::endl;
+    }
+
+    //przewidywana y
+
+    std::vector<double> y(2);
+
+    y[0] = 0.01;
+    y[1] = 1.00;
+
+    net.setYPredicted(y);
+
+    std::cout << "blad sieci - " << net.getNetError() << std::endl;
+
+    while (net.getNetError() > 0.01)
+    {
+        net.backProb();
+        net.process();
+
+        for (double d : input)
+        {
+            std::cout << "Wejscie - input " << d << std::endl;
+        }
+        std::cout << std::endl;
+
+        for (double w : output)
+        {
+            std::cout << "Wyjscia - output " << w << std::endl;
+        }
+
+        std::cout << "blad sieci - " << net.getNetError() << std::endl;
+
+    }
+
 }

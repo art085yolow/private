@@ -1,62 +1,41 @@
 #include "../include/Neuralnetwork.h"
 
 
-void NeuralNetwork::createLayersOfNeurons(std::vector<double> &inputs, std::vector<double> &outputs, std::vector<unsigned int> hiddenLayersWithNumNerouns)
+void NeuralNetwork::createLayersOfNeurons(std::vector<double> &inputs, std::vector<double> &outputs, unsigned int nrLayers, unsigned int nrNeuronsInLayer)
 {
-	/// <summary>
-	/// tworzenie dla bitmemo!! przeniesc i uproscic
-	/// 
-	/// jako funkcja dla gotowych list do wczytania i zapisania
-	/// </summary>
-	
+	this->inputsLayerNetwork = &inputs;
+	this->outputsLayerNetwork = &outputs;
 
-	unsigned int numValueToSave;
+	// build vec of neurons
+	for (size_t idx = 0, totalSumOfNeurons = nrLayers * nrNeuronsInLayer + static_cast<unsigned int>(inputs.size() + outputs.size()); idx < totalSumOfNeurons; idx++)
+	{
+		vecNeurons.push_back(double(0.0));
+		// build vec of Biases
+		vecBias.push_back(double(0.0));
+	}
 
-	// this->numberNeuronsInEachLayers must have all information of each layer - from input to ouptut
-	// push size of inputs to first layer this->numberNeuronsInEachLayers
+	// fisrt layer
 	this->numberNeuronsInEachLayers.push_back(inputs.size());
 
-	// space in memo for neurons and biases
-	numValueToSave = outputs.size();
+	// hidden layer
+	for (size_t idx = 0; idx < nrLayers; idx++)
+	{
+		this->numberNeuronsInEachLayers.push_back(nrNeuronsInLayer);
+	}
 
-	for (size_t idx = 0; idx < hiddenLayersWithNumNerouns.size(); idx++)
-		{
-			numValueToSave += hiddenLayersWithNumNerouns[idx];
-			// push size of each layer
-			this->numberNeuronsInEachLayers.push_back(hiddenLayersWithNumNerouns[idx]);
-		}
-
-	// send to create memo-space
-	// this->neuronsAxon.createSpaceMemory(numValueToSave);
-	// this->neuronsBias.createSpaceMemory(numValueToSave);
-
-	// space for weights
-	// layer beetwen 0 and 1
-	numValueToSave = inputs.size() * hiddenLayersWithNumNerouns[0];
-	
-	// layer from x-1 to x
-	for (size_t idx = 1; idx < hiddenLayersWithNumNerouns.size(); idx++)
-		{
-
-			numValueToSave += hiddenLayersWithNumNerouns[idx - 1] * hiddenLayersWithNumNerouns[idx];
-		
-		}
-	
-	// layer from last hidden x with output
-	numValueToSave += hiddenLayersWithNumNerouns[hiddenLayersWithNumNerouns.size() - 1] * outputs.size();
-	
-	// send to create memo-space
-	// this->weightsNeurons.createSpaceMemory(numValueToSave);
-
-	// last is output layer size
+	//last layer
 	this->numberNeuronsInEachLayers.push_back(outputs.size());
-	
-	// saving list of outputs
-	this->outputsLayerNetwork = &outputs;
-	this->inputsLayerNetwork = &inputs;
 
-	// set randomize value for all memo-spacers -- TODO	
-	// create function for that!!
+	for (size_t idn = 1; idn < this->numberNeuronsInEachLayers.size(); idn++)
+	{
+		for (unsigned int i = 0; i < static_cast<unsigned int>((this->numberNeuronsInEachLayers[idn - 1]) * (this->numberNeuronsInEachLayers[idn])); i++)
+		{
+			vecSynapse.push_back(double(0.0));
+		}
+	}
+
+	randomize();
+	
 }
 
 
@@ -102,10 +81,11 @@ NeuralNetwork::NeuralNetwork(std::vector<double>& inputs, std::vector<double>& o
 
 NeuralNetwork::~NeuralNetwork()
 {
-	delete this->inputsLayerNetwork;
-	delete this->outputsLayerNetwork;
-	delete this->y;
+	// delete this->inputsLayerNetwork;
+	// delete this->outputsLayerNetwork;
+	// delete this->y;
 
+	// correcily delete pointer list
 	// prawidlowo usunac listy var*
 }
 
@@ -116,6 +96,21 @@ void NeuralNetwork::process()
 	// -----------------------------------------------------------TODO -------------------------------------------------------------------------------
 	// --2022-06-04
 	
+	for (size_t x = 1; x < this->numberNeuronsInEachLayers.size(); x++)
+	{
+		for (size_t y = 0; y < this->numberNeuronsInEachLayers[x]; y++)
+		{
+			double suma = *(this->networkNeuronsBiasesLayer[x][y]);
+
+			for (size_t z = 0; z < this->numberNeuronsInEachLayers[x - 1]; z++)
+			{
+				suma += (*(this->networkNeuronsLayer[x-1][z])) * (*(this->networkSynapsesLayer[x][y][z]));
+			}
+
+			*this->networkNeuronsLayer[x][y] = 1 / (1 + exp(-suma));
+	}
+
+	}
 	
 	
 }
@@ -163,63 +158,121 @@ void NeuralNetwork::backProb()
 			// (784x16x16x10) it is calculating just 10 times but not for every weights!! //
 
 
-	// moving from last layer to first
-		std::vector<double> calcError;
-	for (size_t i = 0, tl = 1; i < tl; i++)
+	// 2022-06-12 - create vec with inverted iterators -- normal vec with pushed up in front vec
+	
+	// layer		neuron
+	std::vector<std::vector<double*>> reversNetworkNeuronsLayer;
+	// std::vector<std::vector<double*>> reversNetworkNeuronsBiasesLayer;
+
+	// layer		neuron		synapse
+	std::vector<std::vector<std::vector<double*>>> reversNetworkSynapsesLayer;
+
+	// poprawic!!!!!!!!!!!!!!!!!!!!!!!!!
+
+	reversNetworkNeuronsLayer.resize(this->networkNeuronsLayer.size());
+	// reversNetworkNeuronsBiasesLayer.resize(this->networkNeuronsBiasesLayer.size());
+
+	reversNetworkSynapsesLayer.resize(this->networkSynapsesLayer.size());
+
+	// uzupelnic liste
+
+	for (size_t i = 0; i < this->networkNeuronsLayer.size(); i++)
 	{
-
-
-		for (size_t j = 0, tn = 1; j < tn; j++)
+		for (size_t y = 0; y < this->networkNeuronsLayer[i].size(); y++)
 		{
-			// here is the problem in calculation -- rework needed for the loops
+			reversNetworkNeuronsLayer[i].insert(reversNetworkNeuronsLayer[i].begin(), this->networkNeuronsLayer[i][y]);
+			// reversNetworkNeuronsBiasesLayer[i].insert(reversNetworkNeuronsBiasesLayer[i].begin(), this->networkNeuronsBiasesLayer[i][y]);
+		}
+	}
 
+	for (size_t i = 0; i < this->networkSynapsesLayer.size(); i++)
+	{
+		reversNetworkSynapsesLayer[i].resize(this->networkSynapsesLayer[i].size());
 
-			for (size_t w = 0, tt = 1; w < tt; w++)
+		for (size_t y = 0; y < this->networkSynapsesLayer[i].size(); y++)
+		{
+			for (size_t z = 0; z < this->networkSynapsesLayer[i][y].size(); z++)
 			{
-				if (calcError.size() != 1)
-				{
-					calcError.push_back(double(0.0));
-				}
+				reversNetworkSynapsesLayer[i][y].insert(reversNetworkSynapsesLayer[i][y].begin(), this->networkSynapsesLayer[i][y][z]);
+			}
+		}
+	}
 
 
+	// teraz backprob
+
+	// potrzebuje trzy vec : 1- errNeuron 2- errBias 3- errSynapse // 2 i 3 musi przetrwac i zsumowac bledy z batchy do sredniej
+
+	std::vector<std::vector<double>> errorNeurons;
+
+	errorNeurons.resize(reversNetworkNeuronsLayer.size());
+
+	// sprawdzenie czy listy sa pelne
+	if (this->errorsBias.empty()) this->errorsBias.resize(this->vecBias.size());
+	if (this->errorsSynapse.empty()) this->errorsSynapse.resize(this->vecSynapse.size());
+	
+	size_t idxBias = 0, idxSynapse = 0;
+
+	// Faza 1 - indywidualny blad neuronow/bias/synapse z output (output jest teraz na poczatku vec)
+	
+	for (size_t i = 0; i < reversNetworkNeuronsLayer[0].size(); i++)
+	{
+		errorNeurons[0].push_back((-((*y)[i] - *reversNetworkNeuronsLayer[0][i]))*(*reversNetworkNeuronsLayer[0][i] * (1 - *reversNetworkNeuronsLayer[0][i])));
+		this->errorsBias[idxBias] += this->ratioLearn * errorNeurons[0][i];
+		idxBias++;
+	}
+
+	for (size_t l = 1; l < reversNetworkNeuronsLayer.size(); l++)
+	{
+		if (errorNeurons[l].empty())errorNeurons[l].resize(reversNetworkNeuronsLayer[l].size());
+	}
+		
+		// Faza 2 - warstwy ukryte
+	for (size_t l = 1; reversNetworkNeuronsLayer.size(); l++)
+	{
+		
+		for (size_t i = 0; i < reversNetworkNeuronsLayer[l].size(); i++)
+		{
+
+
+			for (size_t y = 0; y < reversNetworkSynapsesLayer[l][i].size(); y++)
+			{
+				
+				errorNeurons[l][i] += *reversNetworkNeuronsLayer[l - 1][y] * *reversNetworkSynapsesLayer[l][i][y];
+				this->errorsSynapse[idxSynapse] = this->ratioLearn * errorNeurons[l - 1][y] * *reversNetworkSynapsesLayer[l][i][y];
+				idxSynapse++;
 			}
 
-			// bias
-		}
-		// change layer to L-1
-		//(*NeuralNetworkLayers)[tl - i].getNeuronsFromLayer() = (*NeuralNetworkLayers)[tl - i - 1].getNeuronsFromLayer();
+			this->errorsBias[idxBias] += this->ratioLearn * errorNeurons[l][i];
+			idxBias++;
 
-		for (size_t j = 0; j < 1; j++)
-		{
-			// error for L-1 for next calculation
 		}
+	};
 
+	std::vector<double> revErrBias;
+
+	for (size_t i = 0; i < this->errorsBias.size(); i++)
+	{
+		revErrBias.push_back(errorsBias[i]);
 	}
-	
 
-	/*
-	// sprawdzenie na poczatek czy bitmemo neuron i weight sa odwrocone -- cel koniec na poczatku
+	for (size_t i = 0; i < this->vecBias.size(); i++)
+	{
+		this->vecBias[i] -= revErrBias[i];
+	}
 
-	if (!this->neuronsAxon.reversed()) { this->neuronsAxon.reverse(); };
-	if (!this->neuronsBias.reversed()) { this->neuronsBias.reverse(); };
-	if (!this->weightsNeurons.reversed()) { this->weightsNeurons.reverse(); };
+	revErrBias.clear();
 
-	/*
-	
-	zlozonosc problemu:
-	kolejnosc i precyzja obliczania
+	for (size_t i = 0; this->errorsSynapse.size(); i++)
+	{
+		revErrBias.push_back(this->errorsSynapse[i]);
+	}
 
-	O(0) ... O(N)									-- delErrorT dla O(0) to [-(Y(O(0) - Axon(O(0))] -- roznica miedzy przewidywana (Y) a wynikiem wyjscia (O)
-	w(O(0)-H(0))(0) ...w(O(N)-H(N))(N)				-- [new]w = w - r * axon(H(0)) * [ axon(O(0)) * ( 1 - axon(0))] * [ - (Y{O(0)} - axon{O(0)}]
-	H(0) ... H(N)									-- delErrorT dla H(0) to suma dla delError[O(0)] + ... + delError[O(N)] czyli delError[O(0)] = w(O(0)-H(0)) * { [axon(O(0) * (1 - axon(O(0))] * [ - (Y{O(0)} - axon{O(0)}] }
-	w(H(0)-I(0))(0) ... w(H(N)-I(N))(N)				-- [new]w(H(0)-I(0)) = w(H(0)-I(0)) - r * axon(I(0)) * [axon(H(0)) * ( 1 - axon(H(0))] * [ delError[H(0)]
-	I(0) ... I(N)
-	
-	*/
-
-	/// czy jest sens bawic sie z bit data czy moze uzyc poprostu vectora?
-
-	
+	for (size_t i = 0; i < this->vecSynapse.size(); i++)
+	{
+		this->vecSynapse[i] -= revErrBias[i];
+	}
+	revErrBias.clear();
 
 }
 
@@ -230,42 +283,43 @@ void NeuralNetwork::setRatio(double ratio)
 
 double NeuralNetwork::getNetError()
 {
-	setError();
+	calculateTotalError();
 	return this->totalError;
 }
 
 
 void NeuralNetwork::calculateTotalError()
 {
+	// network error
+	 this->totalError = 0.0;
 	
-
-	 for (size_t i = 0, tt = 1; i < tt; i++)
-	 {
-		 if (this->errors.size() != tt)
-		 {
-			 this->errors.push_back(double(0.0));
-		 }
-
-	 }
-};
-
-void NeuralNetwork::setError()
-{ 
-	
-	this->totalError = 0.0;
-	
-	for (size_t i = 0, tt = 1; i < tt; i++)
+	for (size_t i = 0, tt = (*this->outputsLayerNetwork).size(); i < tt; i++)
 	{
 		double errorOut ;
-		// errorOut = 0.5 * (((*y)[i] - NeuralNetworkLayers[this->NeuralNetworkLayers.size() - 1].getNeuronsFromLayer()[i].getAxon()) * ((*y)[i] - NeuralNetworkLayers[this->NeuralNetworkLayers.size() - 1].getNeuronsFromLayer()[i].getAxon()));
+		errorOut = 0.5 * (((*y)[i] - (*this->outputsLayerNetwork)[i]) * ((*y)[i] - (*this->outputsLayerNetwork)[i]));
 		
-		//	this->totalError += errorOut;
+		this->totalError += errorOut;
 	}
+	 
+};
+
+void NeuralNetwork::setError(double val)
+{ 
+	
+	this->totalError = val;
 	
 }
 
 void NeuralNetwork::createNetwork()
 {
+	// new
+
+	unsigned int idxVec = 0;
+
+
+
+	// old
+	/*
 	// put the vecs neuron/bias/synaps in correct layers
 	// thanks to vec this->numberNeuronsInEachLayers we know how devide neurons and biases
 
@@ -369,7 +423,7 @@ void NeuralNetwork::createNetwork()
 		}
 
 	}
-
+	*/
 
 }
 
@@ -395,3 +449,4 @@ void NeuralNetwork::setInputsOutputs(std::vector<double>& inputs, std::vector<do
 
 	*/
 }
+
