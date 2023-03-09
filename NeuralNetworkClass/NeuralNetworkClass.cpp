@@ -14,7 +14,7 @@
 void test1();
 void test2();
 void test3();
-void test4();
+void test5();
 
 int main()
 {
@@ -22,7 +22,7 @@ int main()
 
     //WindowNet* progWindow = new WindowNet();
 
-    test4();    /// refactoring code if needed to run with window /// option 1 : create a test3 as a <!> class <!> and what to have
+    test5();    /// refactoring code if needed to run with window /// option 1 : create a test3 as a <!> class <!> and what to have
    // DataStream trainImages("testData/train-images.idx3-ubyte", "testData/train-labels.idx1-ubyte");
     //DataStream test("testData/t10k-images.idx3-ubyte", "testData/t10k-labels.idx1-ubyte");
 
@@ -295,93 +295,30 @@ void test3()
     //  - controls the poiters and vectors
 }
 
-void test4()
+void test5()
 {
+    // podobny do test1 - [ok]
+    // test2/random bias&weights -- []
+    NeuralNetwork theNet("2,2,2");
 
-        /// Idea project:
-    /// replace vectors to stringstream
-    /// simplified code
-    /// delete unnessery files
-    /// read/write file 
-    /// 
-    /// Needed info:
-    /// 
-    /// the way of work stringstream
-    /// selecting position in stringstream
-    /// design the network calculation/reading/writing
-    /// 
+    std::vector<std::reference_wrapper<double>> inputs;
+    theNet.getInputs(inputs);
 
-
-    ///
-    /// 2022-04-09
-    /// what TODO
-    /// 1. modifikacja funkcji Backpropagation
-    /// 2. funkcja process ma sprawdzic czy memobit nie jest odwrocone
-    /// 3. modyfikacja funkcji obliczania bledu
-    ///  4. do sprawdzenia i modyfikacji:
-    ///         - void NeuralNetwork::calculateTotalError() / neuralnetwork.cpp
-    ///         - void NeuralNetwork::setInputsOutputs(
-    ///         - void NeuralNetwork::setError()
-    ///         - void NeuralNetwork::backProb()
-    /// 
-    /// 2022-05-06
-    ///  zmienic pointery na referemcje
-    /// 
-    
-    std::vector<double> input, output;
-
-    input.push_back(double(0.05));
-    input.push_back(double(0.1));
-
-    for (size_t i = 0; i < 2; i++)
+    if (!inputs.empty() && (inputs.size() > 1))
     {
-        output.push_back(double(0.0));
+
+        inputs[0].get() = 0.05;
+        inputs[1].get() = 0.1;
     }
 
-    NeuralNetwork net(input, output, 1, 2);
+    theNet.process();
+    // set Y prediction
+    std::vector<double>& y = theNet.getYrefList();
 
-    net.process();
+    y.push_back(0.01);
+    y.push_back(0.99);
 
-    for (double d : input)
-    {
-        std::cout << "Wejscie - input " << d << std::endl;
-    }
-    std::cout << std::endl;
+    theNet.print();
 
-    for (double w : output)
-    {
-        std::cout << "Wyjscia - output " << w << std::endl;
-    }
-
-    //przewidywana y
-
-    std::vector<double> y(2);
-
-    y[0] = 0.01;
-    y[1] = 1.00;
-
-    net.setYPredicted(y);
-
-    std::cout << "blad sieci - " << net.getNetError() << std::endl;
-
-    while (net.getNetError() > 0.01)
-    {
-        net.backProb();
-        net.process();
-
-        for (double d : input)
-        {
-            std::cout << "Wejscie - input " << d << std::endl;
-        }
-        std::cout << std::endl;
-
-        for (double w : output)
-        {
-            std::cout << "Wyjscia - output " << w << std::endl;
-        }
-
-        std::cout << "blad sieci - " << net.getNetError() << std::endl;
-
-    }
-
+    // train net
 }

@@ -38,7 +38,7 @@ void RNN::setNetwork()
 		NeuralNetwork dotnet(this->inputs, this->outputs, 2, 16);
 			//dotnet.createLayersOfNeurons(this->inputs, this->outputs, 2, 16);
 			this->RNNnet = &dotnet;
-		this->RNNnet->setYPredicted(this->yPredict);
+		//this->RNNnet->setYPredicted(this->yPredict);
 
 	}
 
