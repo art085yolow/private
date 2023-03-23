@@ -147,7 +147,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="include\rebuild\BitDataMemo.cpp" />
     <ClCompile Include="src\DataStream.cpp" />
     <ClCompile Include="src\controls.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -166,7 +165,6 @@
   <ItemGroup>
     <ClInclude Include="include\DataStream.h" />
     <ClInclude Include="include\Neuralnetwork.h" />
-    <ClInclude Include="include\rebuild\BitDataMemo.h" />
     <ClInclude Include="include\render\WindowNet.h" />
     <ClInclude Include="include\RNN.h" />
     <ClInclude Include="include\SAEnum.h" />

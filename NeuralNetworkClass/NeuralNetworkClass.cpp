@@ -298,7 +298,7 @@ void test3()
 void test5()
 {
     // podobny do test1 - [ok]
-    // test2/random bias&weights -- []
+    // test2/random bias&weights -- [ok]
     NeuralNetwork theNet("2,2,2");
 
     std::vector<std::reference_wrapper<double>> inputs;
@@ -321,4 +321,28 @@ void test5()
     theNet.print();
 
     // train net
+    unsigned int stepper = 0, check=50;
+
+    while (theNet.getNetError() > 0.01)
+    {
+        std::cout << "\nSTEP: " << stepper << " ERROR NET: " << theNet.getNetError() << "\n";
+        std::vector<double> errNeu, errSyn;
+
+        theNet.calculateNetErr(errNeu, errSyn);
+        theNet.backProb(errNeu, errSyn);
+        theNet.process();
+
+        if (stepper == check)
+        {
+            check += 50;
+            theNet.print();
+        }
+
+        stepper++;
+    }
+
+    std::cout << "\n - - - - - RESOULTS - - - - -\n";
+    theNet.print();
+
+    // test complite - [ok]
 }

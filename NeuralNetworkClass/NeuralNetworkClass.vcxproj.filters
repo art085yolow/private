@@ -36,9 +36,6 @@
     <ClCompile Include="src\DataStream.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="include\rebuild\BitDataMemo.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
     <ClCompile Include="src\RNN.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
@@ -54,9 +51,6 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="include\DataStream.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="include\rebuild\BitDataMemo.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="include\RNN.h">

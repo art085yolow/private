@@ -59,7 +59,7 @@ NeuralNetwork::NeuralNetwork(std::string s)
 		// przypisac IDneurons in/out do synaps
 	
 	std::vector<unsigned int> theConnection;
-	for (size_t l = 0, s = 0; l < numberNeuronsInEachLayers.size(); l++)
+	for (unsigned int l = 0, s = 0; l < numberNeuronsInEachLayers.size(); l++)
 	{
 		if (l > 0)
 		{
@@ -67,7 +67,7 @@ NeuralNetwork::NeuralNetwork(std::string s)
 			theConnection.push_back(numberNeuronsInEachLayers[l - 1] + theConnection[l - 1]);
 
 
-			for (size_t n = 0; n < numberNeuronsInEachLayers[l]; n++)
+			for (unsigned int n = 0; n < numberNeuronsInEachLayers[l]; n++)
 			{
 				unsigned int n_l_id = n + theConnection[l];
 
@@ -75,7 +75,7 @@ NeuralNetwork::NeuralNetwork(std::string s)
 				Neuron neuronG;
 				neuronG.id_number = n_l_id;
 
-				for (size_t n_l_prev = 0; n_l_prev < numberNeuronsInEachLayers[l - 1]; n_l_prev++, s++)
+				for (unsigned int n_l_prev = 0; n_l_prev < numberNeuronsInEachLayers[l - 1]; n_l_prev++, s++)
 				{
 					Synapse syn;
 
@@ -104,7 +104,7 @@ NeuralNetwork::NeuralNetwork(std::string s)
 			theConnection.push_back(l);
 
 			// generating neurons for fist layer
-			for (size_t n = 0; n < numberNeuronsInEachLayers[l]; n++)
+			for (unsigned int n = 0; n < numberNeuronsInEachLayers[l]; n++)
 			{
 
 				Neuron in;
@@ -157,29 +157,84 @@ double NeuralNetwork::randomize()
 }
 
 
-void NeuralNetwork::backProb()
-{			///			---			REFACTOR THE HOLY PROCESS OF CALCULATION			---				///
-			// main problem is the size of 'error' list from last layer to next //
-			// (784x16x16x10) it is calculating just 10 times but not for every weights!! //
-
-
-
-	std::vector<double> revErrBias;
-
-	for (size_t i = 0; i < this->errorsBias.size(); i++)
+void NeuralNetwork::backProb(std::vector<double> neuronErr, std::vector<double> synapseErr)
+{
+	std::cout << "\n BACKPROB: \n - - - - - PROCESSING - - - - -\n";
+	if (this->neuron_list_Id.size() == neuronErr.size() && this->synapse_list_Id.size() == synapseErr.size())
 	{
-		revErrBias.push_back(errorsBias[i]);
+		for (size_t it = 0; it < synapse_list_Id.size(); it++)
+		{
+			synapse_list_Id[it].weight -= this->ratioLearn * synapseErr[it];
+
+			if (it < neuron_list_Id.size() )
+			{
+				neuron_list_Id[it].bias -= this->ratioLearn * neuronErr[it];
+			}
+
+		}
+
+	}
+	else
+	{
+		std::cout << "\n BACKPROB: vectors are diffrent \n PROCESS TERMINATED \n";
 	}
 
-	revErrBias.clear();
 
-	for (size_t i = 0; this->errorsSynapse.size(); i++)
+
+}
+
+void NeuralNetwork::calculateNetErr(std::vector<double>& neuronErr, std::vector<double>& synapseErr)
+{
+
+	if(this->neuron_list_Id.size() != neuronErr.size()) 
 	{
-		revErrBias.push_back(this->errorsSynapse[i]);
+	
+		neuronErr.resize(this->neuron_list_Id.size());
+
 	}
 
-	revErrBias.clear();
+	if (this->synapse_list_Id.size() != synapseErr.size())
+	{
 
+		synapseErr.resize(this->synapse_list_Id.size());
+
+	}
+	// first calculate Error output from Y prediction
+	for (unsigned int it=0, outputIt = first_id_from_output_layer() + it; it < this->y.size(); it++, outputIt++)
+	{
+		neuronErr[outputIt] += (-(y[it] - neuron_list_Id[outputIt].axon));
+	}
+
+	// calculating Error for neural net
+	for (unsigned int it = this->neuron_list_Id.size()-1; it > this->numberNeuronsInEachLayers[0]; it--)
+	{
+					// error for current neuron multiply by revers calculatet neuron axon
+		double partialErr = neuronErr[it] * (neuron_list_Id[it].axon * (1 - neuron_list_Id[it].axon));
+
+		// first step - synaps error connected with itereted neuron
+		for (unsigned int synapsIt = 0; synapsIt < neuron_list_Id[it].idSynapsesListIn.size(); synapsIt++)
+		{
+			unsigned int currentSynapseID = neuron_list_Id[it].idSynapsesListIn[synapsIt];
+			// current synaps error
+			synapseErr[currentSynapseID] += partialErr * neuron_list_Id[ synapse_list_Id[ currentSynapseID].idNeuronIn].axon;
+			
+			// error neuron connected with synapse
+			neuronErr[synapse_list_Id[currentSynapseID].idNeuronIn] += partialErr * synapse_list_Id[currentSynapseID].weight;
+		}
+
+
+	}
+
+}
+
+unsigned int NeuralNetwork::first_id_from_output_layer()
+{
+	unsigned int ret = 0;
+	for (size_t i = 0; i < numberNeuronsInEachLayers.size() - 1; i++)
+	{
+		ret+= numberNeuronsInEachLayers[i];
+	}
+	return ret;
 }
 
 void NeuralNetwork::setRatio(double ratio)
@@ -221,7 +276,7 @@ void NeuralNetwork::calculateTotalError()
 		 for (size_t i = 0; i < out.size(); i++)
 		 {
 			 double errorOut;
-			 errorOut = 0.5 * (y[i] - (out[i].get()) * (y[i] - (out[i].get())));
+			 errorOut = 0.5 * ((y[i] - (out[i].get())) * (y[i] - (out[i].get())));
 
 			 this->totalErrorOutput += errorOut;
 		 }
@@ -250,19 +305,14 @@ void NeuralNetwork::getInputs(std::vector<std::reference_wrapper<double>>& in)
 	{
 		in.push_back(neuron_list_Id[i].axon);
 	}
-	// remeber to get value by [- '.get()' -]
 }
 
 
 void NeuralNetwork::getOutputs(std::vector<std::reference_wrapper<double>>& out)
 {
-	unsigned int id_neuron_from = 0;
-	for (size_t i = 0; i < numberNeuronsInEachLayers.size()-2; i++)
-	{
-		id_neuron_from += numberNeuronsInEachLayers[i];
-	}
+	unsigned int id_neuron_from = first_id_from_output_layer();
 	
-	for (size_t i = id_neuron_from; i < neuron_list_Id.size()-1; i++)
+	for (size_t i = id_neuron_from; i < neuron_list_Id.size(); i++)
 	{
 		out.push_back(neuron_list_Id[i].axon);
 	}

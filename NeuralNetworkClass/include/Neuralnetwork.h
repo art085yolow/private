@@ -4,7 +4,6 @@
 #include <sstream>
 #include "SAEnum.h"
 #include <string>
-#include "rebuild/BitDataMemo.h"
 #include <map>
 
 
@@ -68,7 +67,12 @@ struct Neuron
 		std::vector<double>& getYrefList();
 		
 		// -- TODO	-- refactor
-		void backProb(); 
+		// backProb - apply changes from error list
+		void backProb(std::vector<double> neuronErr, std::vector<double> synapseErr); 
+		// calculating error for each neuron/synaps - one step
+		void calculateNetErr(std::vector<double>& neuronErr, std::vector<double>& synapseErr);
+
+		unsigned int first_id_from_output_layer();
 		
 		// learning ratio -- recommended 0.1 - 0.01
 		void setRatio(double ratio);
@@ -87,9 +91,6 @@ struct Neuron
 		
 		std::vector<unsigned int> numberNeuronsInEachLayers;
 
-
-//		BitDataMemo weightsSynapses;
-//		BitDataMemo neuronsBiases;
 
 		double ratioLearn = 0.05;
 		double networkError = 0.1;

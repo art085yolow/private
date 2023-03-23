@@ -24,12 +24,12 @@ void RNN::setNetwork()
 {
 	if (!this->data.getListOfImages().empty())
 	{
-		for (size_t i = 0, tt = this->data.getListOfImages()[0].width * this->data.getListOfImages()[0].height; i < tt; i++)
+		for (unsigned int i = 0, tt = this->data.getListOfImages()[0].width * this->data.getListOfImages()[0].height; i < tt; i++)
 		{
 			this->inputs.push_back(double(0.0));
 		}
 
-		for (size_t i = 0; i < 10; i++)
+		for (unsigned int i = 0; i < 10; i++)
 		{
 			this->outputs.push_back(double(0.0));
 			this->yPredict.push_back(double(0.0));
@@ -48,12 +48,12 @@ void RNN::trainNetwork()
 {
 	// devide all train data for 10 sampling image train and calculate error
 
-	for (size_t nrImages = this->data.getListOfImages().size(); this->sampling < nrImages; this->sampling++)
+	for (unsigned int nrImages = this->data.getListOfImages().size(); this->sampling < nrImages; this->sampling++)
 	{
-		for (size_t i = 0; i < 10; i++)
+		for (unsigned int i = 0; i < 10; i++)
 		{
 			// send image list to network,process and calculate error
-			for (size_t y = 0, tt = this->data.getListOfImages()[this->sampling].m_char.size(); y < tt; y++)
+			for (unsigned int y = 0, tt = this->data.getListOfImages()[this->sampling].m_char.size(); y < tt; y++)
 			{
 				this->inputs[y] = this->data.getListOfImages()[this->sampling].getDoubleValue(y);
 			}
@@ -64,7 +64,7 @@ void RNN::trainNetwork()
 			// set the correct 'y' answer
 			this->correctAnswer = this->data.getListOfLabels()[this->sampling];
 			// TODO loop for output layer
-			for (size_t g = 0; g < 10; g++)
+			for (unsigned int g = 0; g < 10; g++)
 			{
 					if (g == correctAnswer)
 					{
@@ -80,7 +80,7 @@ void RNN::trainNetwork()
 			this->RNNnet->calculateTotalError();
 
 		}
-		this->RNNnet->backProb();
+		//this->RNNnet->backProb();
 	}
 }
 
