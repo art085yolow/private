@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <iostream>
+#include <fstream>
+#include <ostream>
 #include <sstream>
 #include "SAEnum.h"
 #include <string>
@@ -17,8 +19,6 @@ struct Synapse
 
 	double weight = 0.0;
 
-	unsigned int getIdNeuronIn();
-	double getValue();
 };
 
 
@@ -26,51 +26,40 @@ struct Neuron
 {
 	unsigned int id_number;
 
-	std::vector<unsigned int> idSynapsesListIn;
-	//std::vector<unsigned int> idListOut; -- move that to doffrent section, backprob
-
 	double axon = 0.0;
 	double bias = 0.0;
+	
+	std::vector<unsigned int> idSynapsesListIn;
 
-	double getValue();
 };
 
 	class NeuralNetwork
 	{
 	public:
-		NeuralNetwork(std::vector<double>& inputs, std::vector<double>& outputs, unsigned int nrLayers = 1, unsigned int nrNeuronsInLayer = 1);
+		NeuralNetwork(std::string s); // s contain: "numbers of inputs" for [input-hidden-output] neurons, min 2 [in, out] numbers - exp: "1-3-4" | "1-4,"| "9-10-2-36-100"
 		~NeuralNetwork();
 
-		NeuralNetwork(std::string s); // s contain: "numbers of inputs" for [input, hidden, output] neurons, min 2 [in, out] numbers - exp: "1, 3, 4" | "1, 4,"| "9, 10, 2, 36, 100"
-
-				
-		// TODO
-		void createNetwork();
-
+		// creating new network or reading from file
+		void create_network();
+		
 		// TODO  -- refactor
 		void getInputs(std::vector<std::reference_wrapper<double>>& in);
 		void getOutputs(std::vector<std::reference_wrapper<double>>& out);
 		
-		// feedForward  -- TODO P1
+		// feedForward
 		void process();
 
-		// randomize function - 0 - default for bias and weight // - 1 - for bias // - 2 - for synaps
+		// randomize function
 		double randomize();
 
-		// rename/refactor/TODO
-		void calculateTotalError();
 		
 		// NET Error range - set
 		void setErrorRange(double val);
 		
-		// required target //--refactoring
-		std::vector<double>& getYrefList();
-		
-		// -- TODO	-- refactor
 		// backProb - apply changes from error list
 		void backProb(std::vector<double> neuronErr, std::vector<double> synapseErr); 
 		// calculating error for each neuron/synaps - one step
-		void calculateNetErr(std::vector<double>& neuronErr, std::vector<double>& synapseErr);
+		void calculateNetErr(std::vector<double>& neuronErr, std::vector<double>& synapseErr, std::vector<double>& y);
 
 		unsigned int first_id_from_output_layer();
 		
@@ -78,13 +67,27 @@ struct Neuron
 		void setRatio(double ratio);
 
 		// get NET Error
-		double getNetError();
+		double getNetError(std::vector<double>& y);
 
 		// print neurons and synapses status
-		void print();
+		void printAll();
+		void printInputs();
+		void printOutputs();
 
+		// name file corestond to network build // exampl: Network("2-2-2") => file name "2-2-2.nnc"
+		// save/load network from file
+		// network to save
+		bool save_network();
+		// network to load in from file name
+		bool load_network(std::string name);
+
+		// get numberNeuronsInEachLayers in string
+		std::string get_network_structure();
 		
 	private:
+		// name is structure of network
+		std::string name;
+
 		// vec network
 		std::vector<Neuron> neuron_list_Id;
 		std::vector<Synapse> synapse_list_Id;
@@ -98,12 +101,6 @@ struct Neuron
 		// network output error
 		double totalErrorOutput = 0.0;
 		
-		// error for each neuron in layer
-		std::vector<double> errorsBias;
-		std::vector<double> errorsSynapse;
-		
-		// expected targets
-		std::vector<double> y;
-		
-
+		// rename/refactor/TODO
+		void calculateTotalError(std::vector<double>& y);
 	};

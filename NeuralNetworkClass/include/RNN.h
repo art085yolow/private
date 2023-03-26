@@ -1,16 +1,14 @@
 #pragma once
 #include "Neuralnetwork.h"
 #include "DataStream.h"
-#include "render/WindowNet.h"
 
 class RNN 
 {
 public:
-	RNN();
-	RNN(WindowNet* progWindow, DataStream _data);
+	RNN(std::string neural_network_size);
 	~RNN();
 
-	void setData(DataStream _data);
+	void setData(DataStream& _data);
 	void setNetwork();
 
 
@@ -20,14 +18,10 @@ public:
 	void render();
 
 private:
-	WindowNet* window;
-	DataStream data;
+	DataStream* data;
 	NeuralNetwork *RNNnet = nullptr;
-	std::vector<double> inputs;
-	std::vector<double> outputs;
-	std::vector<double> yPredict;
 
-	unsigned int sampling =0;
+	unsigned int samplings =0;
 	unsigned int numberTest;
 	unsigned int correctAnswer;
 };

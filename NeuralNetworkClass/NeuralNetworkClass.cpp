@@ -4,14 +4,11 @@
 #include <cstdlib>
 
 #include "include/Neuralnetwork.h"
-//#include "include/render/WindowNet.h"
 #include "src/utils.cpp"
 #include "include/DataStream.h"
-//#include "include/RNN.h"
+#include "include/RNN.h"
 
-//GLOBAL_VARIABLE bool running = true;
 
-void test1();
 void test2();
 void test3();
 void test5();
@@ -20,91 +17,28 @@ int main()
 {
     std::cout << "Hello World!\n";
 
-    //WindowNet* progWindow = new WindowNet();
 
-    test5();    /// refactoring code if needed to run with window /// option 1 : create a test3 as a <!> class <!> and what to have
+     test5();    
+   
    // DataStream trainImages("testData/train-images.idx3-ubyte", "testData/train-labels.idx1-ubyte");
-    //DataStream test("testData/t10k-images.idx3-ubyte", "testData/t10k-labels.idx1-ubyte");
+    DataStream testImages("testData/t10k-images.idx3-ubyte", "testData/t10k-labels.idx1-ubyte");
 
-    //RNN testedNetwork(progWindow,test);
+    int input_size = 28 * 28,
+        hidden_layer_size = 16,
+        output_size = 10;
+    
+    // 784,16,16,10
+    std::string s = std::to_string(input_size) + ", " + std::to_string(hidden_layer_size) + ", " + std::to_string(hidden_layer_size) + ", " + std::to_string(output_size);
+    
+    RNN testedNetwork(s);
 
-    //testedNetwork.setNetwork();
-    //testedNetwork.trainNetwork();
-    // take one image for render test
-    //std::vector<Image*> pictures = test.getListOfImages();
-    //Image* oneImage = pictures[0];
-    //std::vector<unsigned int> picture = oneImage->getColor();
-
-    //progWindow->imageStream = test.getListOfImages()[0]->getColor();
-
-    //progWindow->pushImage(pictures);
-
-    /*
-
-    while(running)
-    {
-
-        if (!progWindow->ProcessMsg())
-        {
-            std::cout << "Closing Window\n";
-            running = false;
-        }
-
-        progWindow->clear_screen();
-        // Render
+    testedNetwork.setData(testImages);
 
 
 
-
-        progWindow->render();
-
-
-    }
-
-
-    */
     return 0;
 };
 
-void test1()
-{
-/*               ETAP PIEWRWSZY -- STAGE ONE
-        ///             FEEDFORWARD                ///
- */
-    std::vector<double> input, output;
-
-    for (size_t i = 0; i < 2; i++)
-    {
-        input.push_back(double(i + 2.0));
-    }
-
-    for (size_t i = 0; i < 2; i++)
-    {
-        output.push_back(double(0.0));
-    }
-
-    NeuralNetwork net(input, output, 1, 2);
-
-    //net.createLayersOfNeurons(input, output, 1, 2);
-
-     net.process();
-
-    for (double d : input)
-    {
-        std::cout << "Wejscie - input " << d << std::endl;
-    }
-    std::cout<<std::endl;
-
-    for (double w : output)
-    {
-        std::cout << "Wyjscia - output " << w << std::endl;
-    }
-
-    // 
-
-
-
-}
 
 /*      ETAP DRUGI      -----------         WDROZYC BACKPROPAGATION!!!!         */        
 void test2()
@@ -299,7 +233,7 @@ void test5()
 {
     // podobny do test1 - [ok]
     // test2/random bias&weights -- [ok]
-    NeuralNetwork theNet("2,2,2");
+    NeuralNetwork theNet("2-2-2");
 
     std::vector<std::reference_wrapper<double>> inputs;
     theNet.getInputs(inputs);
@@ -313,36 +247,53 @@ void test5()
 
     theNet.process();
     // set Y prediction
-    std::vector<double>& y = theNet.getYrefList();
+    std::vector<double> y;
 
     y.push_back(0.01);
     y.push_back(0.99);
 
-    theNet.print();
+    theNet.printAll();
 
     // train net
     unsigned int stepper = 0, check=50;
 
-    while (theNet.getNetError() > 0.01)
+    while (theNet.getNetError(y) > 0.001)
     {
-        std::cout << "\nSTEP: " << stepper << " ERROR NET: " << theNet.getNetError() << "\n";
+        std::cout << "\nSTEP: " << stepper << " ERROR NET: " << theNet.getNetError(y) << "\n";
         std::vector<double> errNeu, errSyn;
 
-        theNet.calculateNetErr(errNeu, errSyn);
+        theNet.calculateNetErr(errNeu, errSyn, y);
         theNet.backProb(errNeu, errSyn);
         theNet.process();
 
         if (stepper == check)
         {
             check += 50;
-            theNet.print();
+            theNet.printAll();
         }
 
         stepper++;
     }
 
     std::cout << "\n - - - - - RESOULTS - - - - -\n";
-    theNet.print();
+    theNet.printAll();
+
+    theNet.printInputs();
+    theNet.printOutputs();
+
+    std::cout << "Network saved: " << theNet.save_network() << "\n\n";
 
     // test complite - [ok]
+
+    NeuralNetwork new_one("2-2-2");
+    std::vector<std::reference_wrapper<double>> inputs2;
+    new_one.getInputs(inputs2);
+
+    for (auto& t : inputs2)
+    {
+        t.get() = new_one.randomize();
+    }
+
+    std::cout << "\n - - - - - RESOULTS - - - - -\n";
+    new_one.printAll();
 }

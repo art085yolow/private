@@ -1,49 +1,16 @@
 #include "../include/DataStream.h"
 
-Color::Color() : gray(0){}
 
-Color::Color(unsigned char val)
+template<typename T>
+inline std::string DataFile::to_string_with_precision(const T a_value, const int n)
 {
-	gray = val + (val << 8) + (val << 16);
+	std::ostringstream out;
+	out.precision(n);
+	out << std::fixed << a_value;
+	return out.str();
 }
 
-Color::~Color(){}
 
-Image::Image() : width(0), height(0){}
-
-Image::Image(int width, int height, std::vector<unsigned char> val)
-{
-	this->width = width;
-	this->height = height;
-	
-	for (size_t i = 0; i < val.size(); i++)
-	{
-		this->m_char.push_back(unsigned char(val[i]));
-	}
-	
-}
-
-std::vector<unsigned int> Image::getColor()
-{
-	std::vector<unsigned int> colorTab;
-	for (size_t i = 0, tt = this->m_char.size(); i<tt; i++)
-	{
-		unsigned int gray = (255 - m_char[i]) + ((255 - m_char[i]) << 8) + ((255 - m_char[i]) << 16) + (0<<24);
-		colorTab.push_back(unsigned int(gray));
-	}
-	return colorTab;
-}
-
-double Image::getDoubleValue(unsigned int nrOnList)
-{
-	double value;
-	value = m_char[nrOnList] / 255.0;
-	return value;
-}
-
-Image::~Image() { }
-
-DataStream::DataStream() : magic_number(0), number_Im_Lab(0), rows(0), columns(0){}
 
 DataStream::DataStream(const char* pathImage, const char* pathLabels)
 {
@@ -57,33 +24,26 @@ DataStream::DataStream(const char* pathImage, const char* pathLabels)
 		return;
 	}
 
-		const int fileHeaderSizeI = 4 * sizeof(int);
-		unsigned char fileHeaderI[fileHeaderSizeI];
-		f.read(reinterpret_cast<char*>(fileHeaderI), fileHeaderSizeI);
+	const int fileHeaderSizeI = 4 * sizeof(int);
+	unsigned char fileHeaderI[fileHeaderSizeI];
+	f.read(reinterpret_cast<char*>(fileHeaderI), fileHeaderSizeI);
 
-		magic_number = fileHeaderI[3] + (fileHeaderI[2] << 8) + (fileHeaderI[1] << 16) + (fileHeaderI[0] << 24);
-		number_Im_Lab = fileHeaderI[7] + (fileHeaderI[6] << 8) + (fileHeaderI[5] << 16) + (fileHeaderI[4] << 24);
-		rows = fileHeaderI[11] + (fileHeaderI[10] << 8) + (fileHeaderI[9] << 16) + (fileHeaderI[8] << 24);
-		columns = fileHeaderI[15] + (fileHeaderI[14] << 8) + (fileHeaderI[13] << 16) + (fileHeaderI[12] << 24);
-	
-	
-		fileSize = number_Im_Lab;
-		
-		for (size_t i = 0; i < fileSize; i++)
-		{
-			this->streamImageLabels.clear();
+	magic_number = fileHeaderI[3] + (fileHeaderI[2] << 8) + (fileHeaderI[1] << 16) + (fileHeaderI[0] << 24);
+	number_Im_Lab = fileHeaderI[7] + (fileHeaderI[6] << 8) + (fileHeaderI[5] << 16) + (fileHeaderI[4] << 24);
+	width = fileHeaderI[11] + (fileHeaderI[10] << 8) + (fileHeaderI[9] << 16) + (fileHeaderI[8] << 24);
+	height = fileHeaderI[15] + (fileHeaderI[14] << 8) + (fileHeaderI[13] << 16) + (fileHeaderI[12] << 24);
 
-			for (size_t xy = 0, matrices = this->rows * this->columns; xy < matrices; xy++)
-			{
-				unsigned char byteFile[1];
-				f.read(reinterpret_cast<char*>(byteFile), 1);
-				this->streamImageLabels.push_back(unsigned char(byteFile[0]));
-			}
-
-			this->list_images.push_back(Image(this->rows, this->columns, this->streamImageLabels));
-		}
 	
-		this->streamImageLabels.clear();
+	fileSize = number_Im_Lab;
+
+	while (!f.eof())
+	{
+		Image buffImage;
+		f.read(reinterpret_cast<char*>(&buffImage), sizeof(Image));
+		this->list_images.push_back(buffImage);
+	}
+
+	this->streamImageLabels.clear();
 
 	f.close();
 
@@ -103,11 +63,8 @@ DataStream::DataStream(const char* pathImage, const char* pathLabels)
 
 	magic_number = fileHeader[3] + (fileHeader[2] << 8) + (fileHeader[1] << 16) + (fileHeader[0] << 24);
 	number_Im_Lab = fileHeader[7] + (fileHeader[6] << 8) + (fileHeader[5] << 16) + (fileHeader[4] << 24);
-
-
-	fileSize = number_Im_Lab;
-
-	for (size_t i = 0; i < fileSize; i++)
+	
+	while (!l.eof())
 	{
 		unsigned char byteFile[1];
 		l.read(reinterpret_cast<char*>(byteFile), 1);
@@ -129,3 +86,4 @@ std::vector<unsigned char>& DataStream::getListOfLabels()
 {
 	return this->streamImageLabels;
 }
+
