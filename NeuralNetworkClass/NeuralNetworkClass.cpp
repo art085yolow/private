@@ -17,22 +17,28 @@ int main()
 {
     std::cout << "Hello World!\n";
 
-
-     test5();    
+    test5();    
    
-   // DataStream trainImages("testData/train-images.idx3-ubyte", "testData/train-labels.idx1-ubyte");
+    // data files mnist
+    DataStream trainImages("testData/train-images.idx3-ubyte", "testData/train-labels.idx1-ubyte");
     DataStream testImages("testData/t10k-images.idx3-ubyte", "testData/t10k-labels.idx1-ubyte");
 
-    int input_size = 28 * 28,
-        hidden_layer_size = 16,
-        output_size = 10;
+    int input_size = testImages.getWidth() * testImages.getHeight(),    //inputs
+        hidden_layer_size = 16,                                         // x2
+        output_size = 10;                                               // outputs
     
-    // 784,16,16,10
-    std::string s = std::to_string(input_size) + ", " + std::to_string(hidden_layer_size) + ", " + std::to_string(hidden_layer_size) + ", " + std::to_string(output_size);
+    // 784-16-16-10
+    std::string s = std::to_string(input_size) + "-" + std::to_string(hidden_layer_size) + "- " + std::to_string(hidden_layer_size) + "- " + std::to_string(output_size);
     
     RNN testedNetwork(s);
+    
+    while (testedNetwork.procent_of_correct_asware() < 70.0f)
+    {
 
-    testedNetwork.setData(testImages);
+    testedNetwork.trainNetwork(trainImages, 100, 40000);
+    
+    testedNetwork.testNetwork(testImages, 500);
+    }
 
 
 
@@ -235,6 +241,7 @@ void test5()
     // test2/random bias&weights -- [ok]
     NeuralNetwork theNet("2-2-2");
 
+    /*
     std::vector<std::reference_wrapper<double>> inputs;
     theNet.getInputs(inputs);
 
@@ -244,6 +251,10 @@ void test5()
         inputs[0].get() = 0.05;
         inputs[1].get() = 0.1;
     }
+    */
+
+    theNet["I-0"] = 0.05;
+    theNet["I-1"] = 0.1;
 
     theNet.process();
     // set Y prediction
@@ -286,12 +297,11 @@ void test5()
     // test complite - [ok]
 
     NeuralNetwork new_one("2-2-2");
-    std::vector<std::reference_wrapper<double>> inputs2;
-    new_one.getInputs(inputs2);
+    
 
-    for (auto& t : inputs2)
+    for (size_t i=0; i<new_one.get_input_size();i++)
     {
-        t.get() = new_one.randomize();
+        new_one["I-"+std::to_string(i)]=new_one.randomize();
     }
 
     std::cout << "\n - - - - - RESOULTS - - - - -\n";

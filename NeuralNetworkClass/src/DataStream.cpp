@@ -1,15 +1,6 @@
 #include "../include/DataStream.h"
 
 
-template<typename T>
-inline std::string DataFile::to_string_with_precision(const T a_value, const int n)
-{
-	std::ostringstream out;
-	out.precision(n);
-	out << std::fixed << a_value;
-	return out.str();
-}
-
 
 
 DataStream::DataStream(const char* pathImage, const char* pathLabels)
@@ -39,11 +30,10 @@ DataStream::DataStream(const char* pathImage, const char* pathLabels)
 	while (!f.eof())
 	{
 		Image buffImage;
-		f.read(reinterpret_cast<char*>(&buffImage), sizeof(Image));
+		f.read(reinterpret_cast<char*>(&buffImage.imageSource), sizeof(buffImage.imageSource));
 		this->list_images.push_back(buffImage);
 	}
 
-	this->streamImageLabels.clear();
 
 	f.close();
 
@@ -64,12 +54,12 @@ DataStream::DataStream(const char* pathImage, const char* pathLabels)
 	magic_number = fileHeader[3] + (fileHeader[2] << 8) + (fileHeader[1] << 16) + (fileHeader[0] << 24);
 	number_Im_Lab = fileHeader[7] + (fileHeader[6] << 8) + (fileHeader[5] << 16) + (fileHeader[4] << 24);
 	
-	while (!l.eof())
+	for (auto& iterImage : this->list_images)
 	{
-		unsigned char byteFile[1];
-		l.read(reinterpret_cast<char*>(byteFile), 1);
-		this->streamImageLabels.push_back(unsigned char(*byteFile));
+		if(!l.eof())
+		l.read(reinterpret_cast<char*>(&iterImage.label), sizeof(iterImage.label));
 	}
+		
 		
 	l.close();
 }
@@ -82,8 +72,32 @@ std::vector<Image>& DataStream::getListOfImages()
 	return this->list_images;
 }
 
-std::vector<unsigned char>& DataStream::getListOfLabels()
+size_t DataStream::getWidth()
 {
-	return this->streamImageLabels;
+	return this->width;
 }
 
+size_t DataStream::getHeight()
+{
+	return this->height;
+}
+
+void DataStream::shuffle_list()
+{
+	std::random_shuffle(this->list_images.begin(), this->list_images.end());
+}
+
+size_t DataStream::sizeList()
+{
+	return this->list_images.size();
+}
+
+Image const DataStream::operator[](size_t index)
+{
+	return this->list_images[index];
+}
+
+size_t Image::size()
+{
+	return size_t(784);
+}

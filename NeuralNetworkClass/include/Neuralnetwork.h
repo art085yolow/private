@@ -7,6 +7,7 @@
 #include "SAEnum.h"
 #include <string>
 #include <map>
+#include <regex>
 
 
 
@@ -41,10 +42,9 @@ struct Neuron
 
 		// creating new network or reading from file
 		void create_network();
-		
-		// TODO  -- refactor
-		void getInputs(std::vector<std::reference_wrapper<double>>& in);
-		void getOutputs(std::vector<std::reference_wrapper<double>>& out);
+				
+		size_t get_input_size();
+		size_t get_output_size();
 		
 		// feedForward
 		void process();
@@ -61,12 +61,11 @@ struct Neuron
 		// calculating error for each neuron/synaps - one step
 		void calculateNetErr(std::vector<double>& neuronErr, std::vector<double>& synapseErr, std::vector<double>& y);
 
-		unsigned int first_id_from_output_layer();
 		
 		// learning ratio -- recommended 0.1 - 0.01
 		void setRatio(double ratio);
 
-		// get NET Error
+		// get NETwork Error
 		double getNetError(std::vector<double>& y);
 
 		// print neurons and synapses status
@@ -78,22 +77,26 @@ struct Neuron
 		// save/load network from file
 		// network to save
 		bool save_network();
-		// network to load in from file name
-		bool load_network(std::string name);
-
-		// get numberNeuronsInEachLayers in string
-		std::string get_network_structure();
 		
+		double& operator[](std::string in_out_neuron);
 	private:
 		// name is structure of network
 		std::string name;
+		// get numberNeuronsInEachLayers in string
+		std::string get_network_structure();
+		
+		
+		// network to load in from file name
+		bool load_network(std::string name);
+
 
 		// vec network
 		std::vector<Neuron> neuron_list_Id;
 		std::vector<Synapse> synapse_list_Id;
 		
+		// size number for each layer
 		std::vector<unsigned int> numberNeuronsInEachLayers;
-
+		unsigned int first_id_from_last_layer;
 
 		double ratioLearn = 0.05;
 		double networkError = 0.1;
@@ -101,6 +104,14 @@ struct Neuron
 		// network output error
 		double totalErrorOutput = 0.0;
 		
-		// rename/refactor/TODO
+		// getting id for first output neuron
+		unsigned int first_id_from_output_layer();
+		
+		// calculating Network error
 		void calculateTotalError(std::vector<double>& y);
+
+		// testing if string contain only numbers and separator "-"
+		bool test_string(std::string s);
+
+		
 	};

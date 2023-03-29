@@ -4,31 +4,15 @@
 #include <ostream>
 #include <iostream>
 #include <iomanip>
-
-
-class DataFile
-{		
-public:
-
-	DataFile() = default;
-
-	inline static bool Read(DataFile& df, const std::string& sFileName);
-
-	inline static bool Write(const DataFile& df, const std::string& sFileName);
-
-private:
-
-	template <typename T>
-	std::string to_string_with_precision(const T a_value, const int n = 16);
-
-
-};
+#include <algorithm>
 
 
 struct Image
 {
 	// 28*28=784
 	char imageSource[784];
+	char label;
+	size_t size();
 };
 
 class DataStream
@@ -39,14 +23,20 @@ public:
 
 
 	std::vector<Image>& getListOfImages();
-	std::vector<unsigned char>& getListOfLabels();
+
+	size_t getWidth();
+	size_t getHeight();
+
+	void shuffle_list();
+
+	size_t sizeList();
+	Image const operator[](size_t index);
 
 private:
 	unsigned int magic_number;
 	unsigned int number_Im_Lab; // Images or Labels
 	unsigned int width, height;
 
-	std::vector<unsigned char> streamImageLabels;
 	std::vector<Image> list_images;
 
 };
