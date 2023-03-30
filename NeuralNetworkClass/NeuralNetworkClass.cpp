@@ -32,12 +32,12 @@ int main()
     
     RNN testedNetwork(s);
     
-    while (testedNetwork.procent_of_correct_asware() < 70.0f)
+    while (testedNetwork.procent_of_correct_asware() < 95.0f)
     {
 
-    testedNetwork.trainNetwork(trainImages, 100, 40000);
+    testedNetwork.trainNetwork(trainImages, 10, 45000);
     
-    testedNetwork.testNetwork(testImages, 500);
+    testedNetwork.testNetwork(testImages, 7500);
     }
 
 

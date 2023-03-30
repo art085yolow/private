@@ -18,8 +18,7 @@ void RNN::trainNetwork(DataStream& _data, unsigned int batch_size, unsigned int 
 {
 	_data.shuffle_list();
 
-	// devide all train data for 10 sampling image train and calculate error
-	unsigned int save= 100;
+	// devide all train data for 10|batch_size sampling image train and calculate error
 	
 	if(test_size> _data.sizeList()) test_size = _data.sizeList();
 	
@@ -72,12 +71,10 @@ void RNN::trainNetwork(DataStream& _data, unsigned int batch_size, unsigned int 
 		for (auto& s : errSyn) s /= batch_size;
 
 		RNNnet->backProb(errNeu, errSyn);
-		if (save == imagetIteration)
-		{
-			RNNnet->save_network();
-			save+=100;
-		}
+		
 	}
+
+	std::cout << "\n - - - - NETWORK SAVED - - - - \n" << std::endl;
 	RNNnet->save_network();
 }
 
@@ -111,24 +108,25 @@ void RNN::testNetwork(DataStream& _data, unsigned int question_size)
 					answare = output_index;
 				}
 			}
-			char x=' ';
+
+
 			if (answare == (unsigned char)image_in.label)
 			{
 				this->correctAnswer++;
 			}
 			else
 			{
-				x = '*';
-				//this->render(answare, image_in, _data.getWidth(), _data.getHeight());
+				unsigned int number = (unsigned char)image_in.label;
+				this->render(image_in, _data.getWidth(), _data.getHeight());
+			std::cout << "\tNUMBER: " << number << "\tNETWORK ANSWARE: " << answare << std::endl;
 			}
 			
 			this->samplings++;
 
-			unsigned int number = (unsigned char)image_in.label;
 			this->procent_correct_asware = ((float)this->correctAnswer) / (float)(this->samplings) * 100.0f;
 
-			std::cout << x << "\tNUMBER: " << number << "\tNETWORK ANSWARE: " << answare  << "\t%: " << this->procent_correct_asware << std::endl;
 	}
+	std::cout << "\t%: " << this->procent_correct_asware << std::endl;
 }
 
 float RNN::procent_of_correct_asware()
@@ -139,7 +137,7 @@ float RNN::procent_of_correct_asware()
 void RNN::render(Image& image, unsigned int width, unsigned int height)
 {
 	// print image on console
-	system("cls");
+	//system("cls");
 
 	std::cout << "\n - - - - - - - - - - - - - - - \n" << std::endl;
 
