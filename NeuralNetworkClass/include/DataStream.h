@@ -10,15 +10,15 @@
 struct Image
 {
 	// 28*28=784
-	char imageSource[784];
-	char label;
+	unsigned char m_image_source[784];
+	unsigned char m_label;
 	size_t size();
 };
 
 class DataStream
 {
 public:
-	DataStream(const char* pathImage, const char* pathLabels);
+	DataStream(const char* _pathImage, const char* _pathLabels);
 	~DataStream();
 
 
@@ -30,13 +30,13 @@ public:
 	void shuffle_list();
 
 	size_t sizeList();
-	Image const operator[](size_t index);
+	Image const operator[](size_t _index);
 
 private:
-	unsigned int magic_number;
-	unsigned int number_Im_Lab; // Images or Labels
-	unsigned int width, height;
+	unsigned int m_magic_number;
+	unsigned int m_number_Im_Lab; // Images or Labels
+	unsigned int m_width, m_height;
 
-	std::vector<Image> list_images;
+	std::vector<Image> m_list_images;
 
 };

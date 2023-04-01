@@ -21,12 +21,6 @@
     <ClCompile Include="src\Neuralnetwork.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="src\utils.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="src\controls.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
     <ClCompile Include="src\DataStream.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
@@ -36,9 +30,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Neuralnetwork.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SAEnum.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="include\DataStream.h">

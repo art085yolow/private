@@ -148,21 +148,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\DataStream.cpp" />
-    <ClCompile Include="src\controls.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="src\Neuralnetwork.cpp" />
     <ClCompile Include="NeuralNetworkClass.cpp" />
     <ClCompile Include="src\RNN.cpp" />
-    <ClCompile Include="src\utils.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\DataStream.h" />
     <ClInclude Include="include\Neuralnetwork.h" />
     <ClInclude Include="include\RNN.h" />
-    <ClInclude Include="include\SAEnum.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

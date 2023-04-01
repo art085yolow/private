@@ -4,40 +4,43 @@
 #include <cstdlib>
 
 #include "include/Neuralnetwork.h"
-#include "src/utils.cpp"
 #include "include/DataStream.h"
 #include "include/RNN.h"
 
 
+//void test1();
 void test2();
-void test3();
-void test5();
 
 int main()
 {
     std::cout << "Hello World!\n";
 
-    test5();    
+    // very small network
+    test2();    
    
     // data files mnist
-    DataStream trainImages("testData/train-images.idx3-ubyte", "testData/train-labels.idx1-ubyte");
-    DataStream testImages("testData/t10k-images.idx3-ubyte", "testData/t10k-labels.idx1-ubyte");
+    // 60k handwriten digits
+    DataStream train_Images("testData/train-images.idx3-ubyte", "testData/train-labels.idx1-ubyte");
+    // 10k handwriten digits
+    DataStream test_Images("testData/t10k-images.idx3-ubyte", "testData/t10k-labels.idx1-ubyte");
 
-    int input_size = testImages.getWidth() * testImages.getHeight(),    //inputs
+    // network structure
+    int input_size = test_Images.getWidth() * test_Images.getHeight(),    //inputs
         hidden_layer_size = 16,                                         // x2
         output_size = 10;                                               // outputs
     
     // 784-16-16-10
     std::string s = std::to_string(input_size) + "-" + std::to_string(hidden_layer_size) + "- " + std::to_string(hidden_layer_size) + "- " + std::to_string(output_size);
+    // creating network
+    RNN tested_Network(s);
     
-    RNN testedNetwork(s);
-    
-    while (testedNetwork.procent_of_correct_asware() < 95.0f)
+    // training network until reach 91% accuracity
+    while (tested_Network.procent_of_correct_asware() < 91.0f)
     {
 
-    testedNetwork.trainNetwork(trainImages, 10, 45000);
+    tested_Network.trainNetwork(train_Images, 10, 45000);
     
-    testedNetwork.testNetwork(testImages, 7500);
+    tested_Network.testNetwork(test_Images, 7500);
     }
 
 
@@ -47,7 +50,8 @@ int main()
 
 
 /*      ETAP DRUGI      -----------         WDROZYC BACKPROPAGATION!!!!         */        
-void test2()
+/*
+void test1()
 {
 
    // przyklad do etapu drugiego -- example net
@@ -183,65 +187,16 @@ void test2()
     ///         example net --- correct!!! done!!!
     /// </summary>
     /// <returns></returns>
-    */
 }
+*/
 
-void test3()
-{
-    // prepering data for test //
-    // target MNIST //
-
-    /// train/test images data file
-    /// 4 * sizeof(integer) - magic number(2051), number of images(60 000 or 10 000), number of rows(28), number of columns(28) // size_file = rows * columns * number of images
-    /// offset 4*sizeof(integer) - unsigned byte (pixel value 0-255 : 0 - white(empty), 255 - black(full)  //  value / 255 = double result 0.0 - 1.0
-    /// 
-    /// train/test label data file
-    /// 2 * sizeof(integer) - magic number(2049), number of labels(60 000 or 10 000) // size_file = number of labels
-    /// offset 2 * sizeof(integer) - unsigned byte (value label = name)
-
-    /*
-    *   1. read data file - byte stream
-    *   2. put to storage
-    *   3. prepaire net inputs (28x28 pixels = 784 inputs, 2 hidden layer per 16 neurons, 10 outputs - accordingly index 0 is number 0 (zero))
-    *   4. create appropriate places or classes to handle test no. 3 - simplify the reading of the results
-    *   5. create window for graphs/images/ui -- still todo - what date needed
-    */
-
-    /// new image - data.sendImage(); -> load to inputs network -> processing -> calculating target results - output results -> backprop -> repit process
-    /// test 10 image -> calculate sum error for each neuron -> backprop -> repit
-
-    /// class data for stream
-    /// - integer magicNumber
-    /// - integer numbersOfImage
-    /// - integer rows
-    /// - integer columns
-    /// - unsigned char* images
-    /// 
-    /*
-    int color;
-    unsigned char rgb;
-    rgb = 34;
-    color = rgb;
-    std::cout << color << std::endl; //34
-    rgb = 255;
-    color += rgb << 8;
-    std::cout << color << std::endl; // 65314
-    */
-                    // -------------            Denied          ------------------
-                    // -------------    rework/rebuild project  ------------------
-
-    // Problems::
-    //  - too lorge needed memory
-    //  - controls the poiters and vectors
-}
-
-void test5()
+void test2()
 {
     // podobny do test1 - [ok]
     // test2/random bias&weights -- [ok]
     NeuralNetwork theNet("2-2-2");
 
-    /*
+    /*          using reference operator[] 
     std::vector<std::reference_wrapper<double>> inputs;
     theNet.getInputs(inputs);
 
@@ -257,53 +212,61 @@ void test5()
     theNet["I-1"] = 0.1;
 
     theNet.process();
+
     // set Y prediction
     std::vector<double> y;
 
     y.push_back(0.01);
     y.push_back(0.99);
 
-    theNet.printAll();
+    // print to console
+    theNet.print_All();
 
     // train net
     unsigned int stepper = 0, check=50;
 
-    while (theNet.getNetError(y) > 0.001)
+    while (theNet.get_network_error(y) > 0.001)
     {
-        std::cout << "\nSTEP: " << stepper << " ERROR NET: " << theNet.getNetError(y) << "\n";
+        std::cout << "\nSTEP: " << stepper << " ERROR NET: " << theNet.get_network_error(y) << "\n";
+        // error vectors for neurons and synapses
         std::vector<double> errNeu, errSyn;
 
-        theNet.calculateNetErr(errNeu, errSyn, y);
-        theNet.backProb(errNeu, errSyn);
+        // calculating error for current weights and biases
+        theNet.calculate_network_error(errNeu, errSyn, y);
+        // applying correction
+        theNet.backpropagation(errNeu, errSyn);
+        // calculating with new weights and biases
         theNet.process();
 
+        // 50step check print
         if (stepper == check)
         {
             check += 50;
-            theNet.printAll();
+            theNet.print_All();
         }
 
         stepper++;
     }
 
     std::cout << "\n - - - - - RESOULTS - - - - -\n";
-    theNet.printAll();
+    theNet.print_All();
 
-    theNet.printInputs();
-    theNet.printOutputs();
+    theNet.print_Inputs();
+    theNet.print_Outputs();
 
     std::cout << "Network saved: " << theNet.save_network() << "\n\n";
 
     // test complite - [ok]
 
+    // new object with network loaded from file
     NeuralNetwork new_one("2-2-2");
     
 
     for (size_t i=0; i<new_one.get_input_size();i++)
     {
-        new_one["I-"+std::to_string(i)]=new_one.randomize();
+        new_one["I-"+std::to_string(i)]=new_one.random_double();
     }
 
     std::cout << "\n - - - - - RESOULTS - - - - -\n";
-    new_one.printAll();
+    new_one.print_All();
 }

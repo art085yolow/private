@@ -3,12 +3,7 @@
 
 NeuralNetwork::~NeuralNetwork()
 {
-	// delete this->inputsLayerNetwork;
-	// delete this->outputsLayerNetwork;
-	// delete this->y;
-
-	// correcily delete pointer list
-	// prawidlowo usunac listy var*
+	
 }
 
 void NeuralNetwork::create_network()
@@ -20,43 +15,44 @@ void NeuralNetwork::create_network()
 	// przypisac IDneurons in/out do synaps
 
 	std::vector<unsigned int> theConnection;
-	for (unsigned int l = 0, s = 0; l < numberNeuronsInEachLayers.size(); l++)
+	for (unsigned int l = 0, s = 0; l < m_number_neurons_in_each_layers.size(); l++)
 	{
 		if (l > 0)
 		{
 			// ID started on each layer
-			theConnection.push_back(numberNeuronsInEachLayers[l - 1] + theConnection[l - 1]);
+			theConnection.push_back(m_number_neurons_in_each_layers[l - 1] + theConnection[l - 1]);
 
 
-			for (unsigned int n = 0; n < numberNeuronsInEachLayers[l]; n++)
+			for (unsigned int n = 0; n < m_number_neurons_in_each_layers[l]; n++)
 			{
 				unsigned int n_l_id = n + theConnection[l];
 
 				// generating neurons
 				Neuron neuronG;
-				neuronG.id_number = n_l_id;
+				neuronG.m_id_number = n_l_id;
 
-				for (unsigned int n_l_prev = 0; n_l_prev < numberNeuronsInEachLayers[l - 1]; n_l_prev++, s++)
+				for (unsigned int n_l_prev = 0; n_l_prev < m_number_neurons_in_each_layers[l - 1]; n_l_prev++, s++)
 				{
 					Synapse syn;
 
 					unsigned int n_l_prev_id = n_l_prev + theConnection[l - 1];
 
-					syn.id_number = s;
+					syn.m_id_number = s;
 
-					//assigne IDs in/out and random weight
-					syn.idNeuronIn = n_l_prev_id;
-					syn.idNeuronOut = n_l_id;
-					syn.weight = randomize();
+					//assigne IDs in/out and random m_weight
+					syn.m_id_neuron_In = n_l_prev_id;
+					syn.m_id_neuron_Out = n_l_id;
+					syn.m_weight = random_double();
 
-					synapse_list_Id.push_back(syn);
+					m_synapse_list_Id.push_back(syn);
 
 					// assigne synapseID to neuron list
-					neuronG.idSynapsesListIn.push_back(syn.id_number);
+					neuronG.m_id_synapses_list_In.push_back(syn.m_id_number);
 				}
 
-				neuronG.bias = randomize();
-				neuron_list_Id.push_back(neuronG);
+				// random bias. adding to pool
+				neuronG.m_bias = random_double();
+				m_neuron_list_Id.push_back(neuronG);
 			}
 		}
 		else
@@ -65,13 +61,13 @@ void NeuralNetwork::create_network()
 			theConnection.push_back(l);
 
 			// generating neurons for fist layer
-			for (unsigned int n = 0; n < numberNeuronsInEachLayers[l]; n++)
+			for (unsigned int n = 0; n < m_number_neurons_in_each_layers[l]; n++)
 			{
 
 				Neuron in;
 				// giving ID
-				in.id_number = n;
-				neuron_list_Id.push_back(in);
+				in.m_id_number = n;
+				m_neuron_list_Id.push_back(in);
 			}
 		}
 	};
@@ -79,43 +75,43 @@ void NeuralNetwork::create_network()
 
 size_t NeuralNetwork::get_input_size()
 {
-	return this->numberNeuronsInEachLayers[0];
+	return this->m_number_neurons_in_each_layers[0];
 }
 
 size_t NeuralNetwork::get_output_size()
 {
-	return this->numberNeuronsInEachLayers[this->numberNeuronsInEachLayers.size()-1];
+	return this->m_number_neurons_in_each_layers[this->m_number_neurons_in_each_layers.size()-1];
 }
 
-NeuralNetwork::NeuralNetwork(std::string s)
+NeuralNetwork::NeuralNetwork(std::string _s)
 {
 	// removing whitespaces
-	s.erase(
+	_s.erase(
 		std::remove_if(
-			s.begin(), s.end(), ::isspace
+			_s.begin(), _s.end(), ::isspace
 						),
-		s.end());
+		_s.end());
 
-	if (!test_string(s))
+	if (!test_string(_s))
 	{
 		std::cout << "NeuralNetwork intializing: STRING is invalid\n";
 		return;
 	}
 
 	srand((unsigned)time(NULL));
-	this->name = s;
+	this->m_name = _s;
 
 	// making list from string
-	std::istringstream input{ s };
+	std::istringstream input{ _s };
 	for (std::string line; std::getline(input, line, '-');)
 	{
-		numberNeuronsInEachLayers.push_back(std::stoi(line));
+		m_number_neurons_in_each_layers.push_back(std::stoi(line));
 	};
-	this->first_id_from_last_layer = this->first_id_from_output_layer();
+	this->m_first_id_from_last_layer = this->first_id_from_output_layer();
 
 
 	// if file not exist create new network
-	if (!load_network(s))
+	if (!load_network(_s))
 	{
 		create_network();
 	}
@@ -129,20 +125,20 @@ void NeuralNetwork::process()
 		
 		//std::cout << "\n - - - - - PROCESSING - - - - -\n";
 
-	for (auto& n:neuron_list_Id)
+	for (auto& n:m_neuron_list_Id)
 	{
-		if (!n.idSynapsesListIn.empty())
+		if (!n.m_id_synapses_list_In.empty())
 		{
-			double sum = n.bias;
+			double sum = n.m_bias;
 
-			for (auto s_id : n.idSynapsesListIn)
+			for (auto s_id : n.m_id_synapses_list_In)
 			{
 
-				sum += synapse_list_Id[s_id].weight * neuron_list_Id[synapse_list_Id[s_id].idNeuronIn].axon;
+				sum += m_synapse_list_Id[s_id].m_weight * m_neuron_list_Id[m_synapse_list_Id[s_id].m_id_neuron_In].m_axon;
 
 			}
 
-			n.axon = 1 / (1 + exp(-sum));
+			n.m_axon = 1 / (1 + exp(-sum));
 		}
 
 	}
@@ -153,7 +149,7 @@ void NeuralNetwork::process()
 
 }
 
-double NeuralNetwork::randomize()
+double NeuralNetwork::random_double()
 {
 	//srand((unsigned)time(NULL));
 
@@ -161,18 +157,20 @@ double NeuralNetwork::randomize()
 }
 
 
-void NeuralNetwork::backProb(std::vector<double> neuronErr, std::vector<double> synapseErr)
+void NeuralNetwork::backpropagation(std::vector<double> _neuronErr, std::vector<double> _synapseErr)
 {
 	//std::cout << "\n\t   BACKPROB: \n - - - - - PROCESSING - - - - -\n";
-	if (this->neuron_list_Id.size() == neuronErr.size() && this->synapse_list_Id.size() == synapseErr.size())
-	{
-		for (size_t it = 0; it < synapse_list_Id.size(); it++)
-		{
-			synapse_list_Id[it].weight -= this->ratioLearn * synapseErr[it];
 
-			if (it < neuron_list_Id.size() )
+	// updating: biases and weights - learn ratio multiply by error
+	if (this->m_neuron_list_Id.size() == _neuronErr.size() && this->m_synapse_list_Id.size() == _synapseErr.size())
+	{
+		for (size_t it = 0; it < m_synapse_list_Id.size(); it++)
+		{
+			m_synapse_list_Id[it].m_weight -= this->m_learn_ratio * _synapseErr[it];
+
+			if (it < m_neuron_list_Id.size() )
 			{
-				neuron_list_Id[it].bias -= this->ratioLearn * neuronErr[it];
+				m_neuron_list_Id[it].m_bias -= this->m_learn_ratio * _neuronErr[it];
 			}
 
 		}
@@ -188,43 +186,40 @@ void NeuralNetwork::backProb(std::vector<double> neuronErr, std::vector<double> 
 
 }
 
-void NeuralNetwork::calculateNetErr(std::vector<double>& neuronErr, std::vector<double>& synapseErr, std::vector<double>& y)
+void NeuralNetwork::calculate_network_error(std::vector<double>& _neuronErr, std::vector<double>& _synapseErr, std::vector<double>& _y)
 {
-
-	if(this->neuron_list_Id.size() != neuronErr.size()) 
+	// vectors size check
+	if(this->m_neuron_list_Id.size() != _neuronErr.size()) 
 	{
-	
-		neuronErr.resize(this->neuron_list_Id.size());
-
+		_neuronErr.resize(this->m_neuron_list_Id.size());
 	}
 
-	if (this->synapse_list_Id.size() != synapseErr.size())
+	if (this->m_synapse_list_Id.size() != _synapseErr.size())
 	{
-
-		synapseErr.resize(this->synapse_list_Id.size());
-
-	}
-	// first calculate Error output from Y prediction
-	for (unsigned int it=0, outputIt = this->first_id_from_last_layer; it < y.size(); it++, outputIt++)
-	{
-		neuronErr[outputIt] += (-(y[it] - neuron_list_Id[outputIt].axon));
+		_synapseErr.resize(this->m_synapse_list_Id.size());
 	}
 
-	// calculating Error for neural net
-	for (unsigned int it = this->neuron_list_Id.size()-1; it > this->numberNeuronsInEachLayers[0]; it--)
+	// first calculate Error for each neuron output from Y prediction
+	for (unsigned int it=0, outputIt = this->m_first_id_from_last_layer; it < _y.size(); it++, outputIt++)
 	{
-					// error for current neuron multiply by revers calculatet neuron axon
-		double partialErr = neuronErr[it] * (neuron_list_Id[it].axon * (1 - neuron_list_Id[it].axon));
+		_neuronErr[outputIt] += (-(_y[it] - m_neuron_list_Id[outputIt].m_axon));
+	}
+
+	// calculating Error for neural network up to begining
+	for (unsigned int it = this->m_neuron_list_Id.size()-1; it > this-> m_number_neurons_in_each_layers[0]; it--)
+	{
+					// error for current neuron multiply by error neuron from last layer
+		double partialErr = _neuronErr[it] * (m_neuron_list_Id[it].m_axon * (1 - m_neuron_list_Id[it].m_axon));
 
 		// first step - synaps error connected with itereted neuron
-		for (unsigned int synapsIt = 0; synapsIt < neuron_list_Id[it].idSynapsesListIn.size(); synapsIt++)
+		for (unsigned int synapsIt = 0; synapsIt < m_neuron_list_Id[it].m_id_synapses_list_In.size(); synapsIt++)
 		{
-			unsigned int currentSynapseID = neuron_list_Id[it].idSynapsesListIn[synapsIt];
+			unsigned int currentSynapseID = m_neuron_list_Id[it].m_id_synapses_list_In[synapsIt];
 			// current synaps error
-			synapseErr[currentSynapseID] += partialErr * neuron_list_Id[ synapse_list_Id[ currentSynapseID].idNeuronIn].axon;
+			_synapseErr[currentSynapseID] += partialErr * m_neuron_list_Id[ m_synapse_list_Id[ currentSynapseID].m_id_neuron_In].m_axon;
 			
 			// error neuron connected with synapse
-			neuronErr[synapse_list_Id[currentSynapseID].idNeuronIn] += partialErr * synapse_list_Id[currentSynapseID].weight;
+			_neuronErr[m_synapse_list_Id[currentSynapseID].m_id_neuron_In] += partialErr * m_synapse_list_Id[currentSynapseID].m_weight;
 		}
 
 
@@ -235,56 +230,69 @@ void NeuralNetwork::calculateNetErr(std::vector<double>& neuronErr, std::vector<
 unsigned int NeuralNetwork::first_id_from_output_layer()
 {
 	unsigned int ret = 0;
-	for (size_t i = 0; i < numberNeuronsInEachLayers.size() - 1; i++)
+	for (size_t i = 0; i <  m_number_neurons_in_each_layers.size() - 1; i++)
 	{
-		ret+= numberNeuronsInEachLayers[i];
+		ret+=  m_number_neurons_in_each_layers[i];
 	}
 	return ret;
 }
 
-void NeuralNetwork::setRatio(double ratio)
+void NeuralNetwork::set_learning_ratio(double _ratio)
 {
-	this->ratioLearn = ratio;
+	this->m_learn_ratio = _ratio;
 }
 
-double NeuralNetwork::getNetError(std::vector<double>& y)
+double NeuralNetwork::get_network_error(std::vector<double>& _y)
 {
-	calculateTotalError(y);
-	return this->totalErrorOutput;
-}
-
-void NeuralNetwork::printAll()
-{
-	for (auto& n : neuron_list_Id)
+	double ret=0;
+	unsigned int output_index = this->m_first_id_from_last_layer;
+	if (this->get_output_size() == _y.size())
 	{
-		std::cout << "id N: " << n.id_number << " axon N: " << n.axon << " bias N: " << n.bias << " SynapseListSize N: \n - - - - - \n";
-		for (auto& si : n.idSynapsesListIn)
+
+		for (size_t i = 0; i + output_index < this->m_neuron_list_Id.size(); i++)
 		{
-			std::cout << "id S: " << synapse_list_Id[si].id_number << " weight S: " << synapse_list_Id[si].weight << " idIn S: " << synapse_list_Id[si].idNeuronIn << " idOut S: " << synapse_list_Id[si].idNeuronOut << std::endl;
+			double errorOut;
+			errorOut = 0.5 * ((_y[i] - (this->m_neuron_list_Id[i + output_index].m_axon)) * (_y[i] - (this->m_neuron_list_Id[i + output_index].m_axon)));
+
+			ret += errorOut;
+		}
+	}
+
+	return ret;
+}
+
+void NeuralNetwork::print_All()
+{
+	for (auto& n : m_neuron_list_Id)
+	{
+		std::cout << "id N: " << n.m_id_number << " m_axon N: " << n.m_axon << " m_bias N: " << n.m_bias << " SynapseListSize N: \n - - - - - \n";
+		for (auto& si : n.m_id_synapses_list_In)
+		{
+			std::cout << "id S: " << m_synapse_list_Id[si].m_id_number << " m_weight S: " << m_synapse_list_Id[si].m_weight << " idIn S: " << m_synapse_list_Id[si].m_id_neuron_In << " idOut S: " << m_synapse_list_Id[si].m_id_neuron_Out << std::endl;
 		}
 		std::cout << " - - - - - \n" << std::endl;
 	}
 }
 
-void NeuralNetwork::printInputs()
+void NeuralNetwork::print_Inputs()
 {
 	std::cout << "\n - - - - - - - - - - - - - - - \n           INPUTS\n";
 	
-	for (size_t i = 0; i < this->numberNeuronsInEachLayers[0]; i++)
+	for (size_t i = 0; i < this-> m_number_neurons_in_each_layers[0]; i++)
 	{
-		std::cout << "\n Neuron " << i << " : " << this->neuron_list_Id[i].axon;
+		std::cout << "\n Neuron " << i << " : " << this->m_neuron_list_Id[i].m_axon;
 	}
 
 	std::cout << "\n - - - - - - - - - - - - - - - \n";
 }
 
-void NeuralNetwork::printOutputs()
+void NeuralNetwork::print_Outputs()
 {
 	std::cout << "\n - - - - - - - - - - - - - - - \n          OUTPUTS\n";
 
-	for (size_t i = this->first_id_from_last_layer; i < this->neuron_list_Id.size(); i++)
+	for (size_t i = this->m_first_id_from_last_layer; i < this->m_neuron_list_Id.size(); i++)
 	{
-		std::cout << "\n Neuron " << i << " : " << this->neuron_list_Id[i].axon;
+		std::cout << "\n Neuron " << i << " : " << this->m_neuron_list_Id[i].m_axon;
 	}
 
 	std::cout << "\n - - - - - - - - - - - - - - - \n";
@@ -297,22 +305,25 @@ bool NeuralNetwork::save_network()
 
 	std::ofstream write_file(filename, std::ios::binary);
 
-	if (!write_file.is_open()) return false;
-
+	if (!write_file.is_open())
+	{
+		write_file.close();
+		return false;
+	}
 	// first save neuron vector size
-	size_t vector_size = this->neuron_list_Id.size();
+	size_t vector_size = this->m_neuron_list_Id.size();
 	write_file.write((char*)&vector_size, sizeof(vector_size));
 	// save all neurons from vector
-	for (Neuron& iter:this->neuron_list_Id)
+	for (Neuron& iter:this->m_neuron_list_Id)
 	{
-		write_file.write((char*)&iter.id_number, sizeof(iter.id_number));
-		write_file.write((char*)&iter.axon, sizeof(iter.axon));
-		write_file.write((char*)&iter.bias, sizeof(iter.bias));
+		write_file.write((char*)&iter.m_id_number, sizeof(iter.m_id_number));
+		write_file.write((char*)&iter.m_axon, sizeof(iter.m_axon));
+		write_file.write((char*)&iter.m_bias, sizeof(iter.m_bias));
 
-		unsigned int size_vec = iter.idSynapsesListIn.size();
+		unsigned int size_vec = iter.m_id_synapses_list_In.size();
 		write_file.write((char*)&size_vec, sizeof(size_vec));
 
-		for (auto& i:iter.idSynapsesListIn)
+		for (auto& i:iter.m_id_synapses_list_In)
 		{
 		write_file.write((char*)&i, sizeof(i));
 
@@ -321,15 +332,15 @@ bool NeuralNetwork::save_network()
 	}
 
 	// save synapse vector size
-	vector_size = this->synapse_list_Id.size();
+	vector_size = this->m_synapse_list_Id.size();
 	write_file.write((char*)&vector_size, sizeof(vector_size));
 	// save all synapse from vector
-	for (Synapse& iter : this->synapse_list_Id)
+	for (Synapse& iter : this->m_synapse_list_Id)
 	{
-		write_file.write((char*)&iter.id_number, sizeof(iter.id_number));
-		write_file.write((char*)&iter.weight, sizeof(iter.weight));
-		write_file.write((char*)&iter.idNeuronIn, sizeof(iter.idNeuronIn));
-		write_file.write((char*)&iter.idNeuronOut, sizeof(iter.idNeuronOut));
+		write_file.write((char*)&iter.m_id_number, sizeof(iter.m_id_number));
+		write_file.write((char*)&iter.m_weight, sizeof(iter.m_weight));
+		write_file.write((char*)&iter.m_id_neuron_In, sizeof(iter.m_id_neuron_In));
+		write_file.write((char*)&iter.m_id_neuron_Out, sizeof(iter.m_id_neuron_Out));
 	}
 
 	write_file.close();
@@ -337,17 +348,20 @@ bool NeuralNetwork::save_network()
 	return true;
 }
 
-bool NeuralNetwork::load_network(std::string name)
+bool NeuralNetwork::load_network(std::string _name)
 {
-	this->neuron_list_Id.clear();
-	this->synapse_list_Id.clear();
+	this->m_neuron_list_Id.clear();
+	this->m_synapse_list_Id.clear();
 
-	std::string filename = "data/" + name + ".nnc";
+	std::string filename = "data/" + _name + ".nnc";
 
 	std::ifstream open_file(filename, std::ios::in | std::ios::binary);
 
-	if (!open_file.is_open()) return false;
-
+	if (!open_file.is_open())
+	{
+		open_file.close();
+		return false;
+	}
 	size_t vector_size;
 	open_file.read((char*)&vector_size, sizeof(vector_size));
 
@@ -356,20 +370,20 @@ bool NeuralNetwork::load_network(std::string name)
 		Neuron new_neuron;
 		unsigned int new_int;
 
-		open_file.read((char*)&new_neuron.id_number, sizeof(new_neuron.id_number));
+		open_file.read((char*)&new_neuron.m_id_number, sizeof(new_neuron.m_id_number));
 
-		open_file.read((char*)&new_neuron.axon, sizeof(new_neuron.axon));
+		open_file.read((char*)&new_neuron.m_axon, sizeof(new_neuron.m_axon));
 
-		open_file.read((char*)&new_neuron.bias, sizeof(new_neuron.bias));
+		open_file.read((char*)&new_neuron.m_bias, sizeof(new_neuron.m_bias));
 
 		open_file.read((char*)&new_int, sizeof(new_int));
 		for (size_t i = 0, list=new_int; i < list; i++)
 		{
 			open_file.read((char*)&new_int, sizeof(new_int));
-			new_neuron.idSynapsesListIn.push_back(new_int);
+			new_neuron.m_id_synapses_list_In.push_back(new_int);
 		}
 
-		this->neuron_list_Id.push_back(new_neuron);
+		this->m_neuron_list_Id.push_back(new_neuron);
 	}
 
 	open_file.read((char*)&vector_size, sizeof(vector_size));
@@ -378,12 +392,12 @@ bool NeuralNetwork::load_network(std::string name)
 	{
 		Synapse new_synapse;
 
-		open_file.read((char*)&new_synapse.id_number, sizeof(new_synapse.id_number));
-		open_file.read((char*)&new_synapse.weight, sizeof(new_synapse.weight));
-		open_file.read((char*)&new_synapse.idNeuronIn, sizeof(new_synapse.idNeuronIn));
-		open_file.read((char*)&new_synapse.idNeuronOut, sizeof(new_synapse.idNeuronOut));
+		open_file.read((char*)&new_synapse.m_id_number, sizeof(new_synapse.m_id_number));
+		open_file.read((char*)&new_synapse.m_weight, sizeof(new_synapse.m_weight));
+		open_file.read((char*)&new_synapse.m_id_neuron_In, sizeof(new_synapse.m_id_neuron_In));
+		open_file.read((char*)&new_synapse.m_id_neuron_Out, sizeof(new_synapse.m_id_neuron_Out));
 		
-		this->synapse_list_Id.push_back(new_synapse);
+		this->m_synapse_list_Id.push_back(new_synapse);
 	}
 
 	open_file.close();
@@ -395,9 +409,9 @@ std::string NeuralNetwork::get_network_structure()
 {
 	std::string ret;
 
-	for (size_t i=0, last=this->numberNeuronsInEachLayers.size()-1; i < this->numberNeuronsInEachLayers.size();i++)
+	for (size_t i=0, last=this-> m_number_neurons_in_each_layers.size()-1; i < this-> m_number_neurons_in_each_layers.size();i++)
 	{
-		ret += std::to_string(this->numberNeuronsInEachLayers[i]);
+		ret += std::to_string(this-> m_number_neurons_in_each_layers[i]);
 
 		if (i < last) ret += "-";
 	}
@@ -405,11 +419,11 @@ std::string NeuralNetwork::get_network_structure()
 	return ret;
 }
 
-double& NeuralNetwork::operator[](std::string in_out_neuron)
+double& NeuralNetwork::operator[](std::string _in_out_neuron)
 {
-	std::transform(in_out_neuron.begin(), in_out_neuron.end(), in_out_neuron.begin(), ::toupper);
+	std::transform(_in_out_neuron.begin(), _in_out_neuron.end(), _in_out_neuron.begin(), ::toupper);
 
-	if (!std::regex_match(in_out_neuron, std::regex("^[IO]-[0-9]*$")))
+	if (!std::regex_match(_in_out_neuron, std::regex("^[IO]-[0-9]*$")))
 	{
 		std::cout << "NeuralNetwork::operator[] - wrong string syntax\n";
 		
@@ -418,7 +432,7 @@ double& NeuralNetwork::operator[](std::string in_out_neuron)
 	std::string io_string;
 	unsigned int identCall;
 	// making list from string
-	std::istringstream string_input{ in_out_neuron };
+	std::istringstream string_input{ _in_out_neuron };
 	for (std::string line; std::getline(string_input, line, '-');)
 	{
 		if (line == "I")
@@ -438,7 +452,7 @@ double& NeuralNetwork::operator[](std::string in_out_neuron)
 		
 		if (identCall < this->get_input_size())
 		{
-			return this->neuron_list_Id[identCall].axon;
+			return this->m_neuron_list_Id[identCall].m_axon;
 		}
 		else 
 		{
@@ -451,8 +465,8 @@ double& NeuralNetwork::operator[](std::string in_out_neuron)
 		unsigned int out_size = this->get_output_size();
 		if (identCall < out_size)
 		{
-			size_t idx = identCall + this->first_id_from_last_layer;
-			return this->neuron_list_Id[idx].axon;
+			size_t idx = identCall + this->m_first_id_from_last_layer;
+			return this->m_neuron_list_Id[idx].m_axon;
 		}
 		else
 		{
@@ -461,42 +475,12 @@ double& NeuralNetwork::operator[](std::string in_out_neuron)
 	}
 }
 
-
-void NeuralNetwork::calculateTotalError(std::vector<double>& y)
-{
-//	std::cout << "\n - - - - - - - - - - - - - - - \n" ;
-//	std::cout << "     NET ERROR CALCULATION     \n" ;
-	
-	// network error output
-	 this->totalErrorOutput = 0.0;
-	 
-	 unsigned int output_index = this->first_id_from_last_layer;
-	 if (this->get_output_size() == y.size())
-	 {
-
-		 for (size_t i = 0; i+ output_index < this->neuron_list_Id.size(); i++)
-		 {
-			 double errorOut;
-			 errorOut = 0.5 * ((y[i] - (this->neuron_list_Id[i+ output_index].axon)) * (y[i] - (this->neuron_list_Id[i + output_index].axon)));
-
-			 this->totalErrorOutput += errorOut;
-		 }
-	 }
-	
-	 
-//	std::cout << "\n - - - - - - - - - - - - - - - \n";
-}
-bool NeuralNetwork::test_string(std::string s)
+bool NeuralNetwork::test_string(std::string _s)
 { 
-	bool ret =std::regex_match(s, std::regex("^[0-9-]*[0-9]$"));
+	bool ret =std::regex_match(_s, std::regex("^[0-9-]*[0-9]$"));
 
 		return ret;
 }
 ;
 
-void NeuralNetwork::setErrorRange(double val)
-{ 
-	
-	this->networkError = val;
-	
-}
+

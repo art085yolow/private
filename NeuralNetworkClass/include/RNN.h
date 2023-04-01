@@ -5,25 +5,24 @@
 class RNN 
 {
 public:
-	RNN(std::string neural_network_size);
+	RNN(std::string _neural_network_size);
 	~RNN();
 
 	
-	void trainNetwork(DataStream& _data, unsigned int batch_size, unsigned int test_size);
-	void testNetwork(DataStream& _data, unsigned int question_size);
+	void trainNetwork(DataStream& _data, unsigned int _batch_size, unsigned int _test_size);
+	void testNetwork(DataStream& _data, unsigned int _question_size);
 
 	float procent_of_correct_asware();
 
 private:
-	NeuralNetwork *RNNnet = nullptr;
+	NeuralNetwork* m_RNNnet = nullptr;
 
-	unsigned int samplings =0;
-	unsigned int numberTest;
-	unsigned int correctAnswer;
-	float procent_correct_asware=0.0f;
+	unsigned int m_samplings =0;
+	unsigned int m_correctAnswer;
+	float m_procent_correct_asware=0.0f;
 	
 	
 	// print in console
-	void render( Image& image, unsigned int width, unsigned int height);
+	void render( Image& _image, unsigned int _width, unsigned int _height);
 
 };
