@@ -47,6 +47,9 @@ struct Neuron
 		// size for input/output layer
 		size_t get_input_size();
 		size_t get_output_size();
+		//get size for error calculation = number of neurons/synapses
+		size_t get_size_neurons();
+		size_t get_size_synapses();
 		
 		// feedForward
 		void process();

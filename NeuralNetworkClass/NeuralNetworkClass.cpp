@@ -26,16 +26,17 @@ int main()
 
     // network structure
     int input_size = test_Images.getWidth() * test_Images.getHeight(),    //inputs
-        hidden_layer_size = 16,                                         // x2
+        hidden_layer_size_0 = 22,                                         // h1
+        hidden_layer_size_1 = 20,                                         // h2
         output_size = 10;                                               // outputs
     
     // 784-16-16-10
-    std::string s = std::to_string(input_size) + "-" + std::to_string(hidden_layer_size) + "- " + std::to_string(hidden_layer_size) + "- " + std::to_string(output_size);
+    std::string s = std::to_string(input_size) + "-" + std::to_string(hidden_layer_size_0) + "- " + std::to_string(hidden_layer_size_1) + "- " + std::to_string(output_size);
     // creating network
     RNN tested_Network(s);
     
     // training network until reach 91% accuracity
-    while (tested_Network.procent_of_correct_asware() < 91.0f)
+    while (tested_Network.procent_of_correct_asware() < 95.0f)
     {
 
     tested_Network.trainNetwork(train_Images, 10, 45000);

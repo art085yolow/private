@@ -83,6 +83,16 @@ size_t NeuralNetwork::get_output_size()
 	return this->m_number_neurons_in_each_layers[this->m_number_neurons_in_each_layers.size()-1];
 }
 
+size_t NeuralNetwork::get_size_neurons()
+{
+	return this->m_neuron_list_Id.size();
+}
+
+size_t NeuralNetwork::get_size_synapses()
+{
+	return this->m_synapse_list_Id.size();
+}
+
 NeuralNetwork::NeuralNetwork(std::string _s)
 {
 	// removing whitespaces

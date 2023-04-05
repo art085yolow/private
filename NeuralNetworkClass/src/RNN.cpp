@@ -30,16 +30,16 @@ void RNN::trainNetwork(DataStream& _data, unsigned int _batch_size, unsigned int
 		//std::cout << "\n\tStep: " << imagetIteration << "\n";
 		
 		// creating general vector for errors for neurons and synapses
-		std::vector<double> errNeu, errSyn;
+		std::vector<double> errNeu(m_RNNnet->get_size_neurons()), errSyn(m_RNNnet->get_size_synapses());
 
 		// batch iteration
 		for (size_t batch_idx = 0; batch_idx < _batch_size && imagetIteration < _test_size; batch_idx++, imagetIteration++)
 		{
 			// error vectors for one step
-			std::vector<double> errNeu_step, errSyn_step;
-			
+			std::vector<double> errNeu_step(m_RNNnet->get_size_neurons()), errSyn_step(m_RNNnet->get_size_synapses());
+
 			auto image_in = _data[imagetIteration];
-			
+
 			// write value to inputs
 			for (size_t index = 0; index < image_in.size(); index++)
 			{
@@ -52,7 +52,22 @@ void RNN::trainNetwork(DataStream& _data, unsigned int _batch_size, unsigned int
 			// calculate network
 			m_RNNnet->process();
 
-			
+
+			// seting high neural activity 
+			double neuron_out_asware = (*m_RNNnet)["O-" + std::to_string(image_in.m_label)];
+			if (neuron_out_asware <= 1)
+			{
+
+				double limit = 1.0 - m_error_limit;
+				if (neuron_out_asware <= limit)
+				{
+					neuron_out_asware = 1.0 - this->m_error_limit + (1.0 - neuron_out_asware);
+				}
+				else
+				{
+					neuron_out_asware = 1.0;
+				}
+
 				// write prediction y
 				std::vector<double> y(10);
 				for (auto& it : y)
@@ -60,15 +75,10 @@ void RNN::trainNetwork(DataStream& _data, unsigned int _batch_size, unsigned int
 					// setign low neural activity
 					it = 0.001;
 				}
-				// seting high neural activity 
-				y[image_in.m_label] = 0.99;
+				y[image_in.m_label] = neuron_out_asware;
 
 				// calcularing error network for that one step
 				m_RNNnet->calculate_network_error(errNeu_step, errSyn_step, y);
-
-				// checking if general error vectors are equal if not, adjust
-				if (errNeu.size() != errNeu_step.size()) errNeu.resize(errNeu_step.size());
-				if (errSyn.size() != errSyn_step.size()) errSyn.resize(errSyn_step.size());
 
 				// add error from this step to general error vector
 				for (size_t i = 0; i < errSyn.size(); i++)
@@ -79,7 +89,8 @@ void RNN::trainNetwork(DataStream& _data, unsigned int _batch_size, unsigned int
 						errNeu[i] += errNeu_step[i];
 					}
 				}
-			
+
+			}
 		}
 
 		// get average sum of errors
@@ -181,18 +192,27 @@ void RNN::render(Image& _image, unsigned int _width, unsigned int _height)
 		{
 			
 			unsigned int pixel = _image.m_image_source[y * _width + x];
-			if (pixel >= 0 && pixel < 85)
+			if (pixel >= 0 && pixel < 51)
 			{
 				string_image += " ";
 			}
-			else if (pixel >= 85 && pixel < 170)
+			else if (pixel >= 51 && pixel < 102)
 			{
 				string_image += ".";
 			}
-			else if (pixel>=170)
+			else if (pixel >= 102 && pixel < 153)
+			{
+				string_image += "+";
+			}
+			else if (pixel >= 153 && pixel < 204)
 			{
 				string_image += "*";
 			}
+			else if (pixel >= 204)
+			{
+				string_image += "#";
+			}
+
 		}
 
 		string_image += "\n";
