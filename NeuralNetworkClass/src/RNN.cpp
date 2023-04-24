@@ -61,7 +61,7 @@ void RNN::trainNetwork(DataStream& _data, unsigned int _batch_size, unsigned int
 				double limit = 1.0 - m_error_limit;
 				if (neuron_out_asware <= limit)
 				{
-					neuron_out_asware = 1.0 - this->m_error_limit + (1.0 - neuron_out_asware);
+					neuron_out_asware = 1.0 + (1.0 - neuron_out_asware);
 				}
 				else
 				{
@@ -177,6 +177,32 @@ float RNN::procent_of_correct_asware()
 	return this->m_procent_correct_asware;
 }
 
+unsigned char RNN::get_filtered_u_char(unsigned char c)
+{
+	if (c >= 0 && c < 51)
+	{
+		c = 0;
+	}
+	else if (c >= 51 && c < 102)
+	{
+		c = 51;
+	}
+	else if (c >= 102 && c < 153)
+	{
+		c = 102;
+	}
+	else if (c >= 153 && c < 204)
+	{
+		c = 153;
+	}
+	else if (c >= 204)
+	{
+		c = 255;
+	}
+	
+	return c;
+}
+
 void RNN::render(Image& _image, unsigned int _width, unsigned int _height)
 {
 	// print image on console
@@ -188,34 +214,33 @@ void RNN::render(Image& _image, unsigned int _width, unsigned int _height)
 	std::string string_image;
 	for (size_t y = 0; y < _height; y++)
 	{
+		string_image += "| ";
 		for (size_t x = 0; x < _width; x++)
 		{
 			
-			unsigned int pixel = _image.m_image_source[y * _width + x];
-			if (pixel >= 0 && pixel < 51)
+			unsigned int pixel = get_filtered_u_char(_image.m_image_source[y * _width + x]);
+			switch (pixel)
 			{
+			case 0:
 				string_image += " ";
-			}
-			else if (pixel >= 51 && pixel < 102)
-			{
+				break;
+			case 51:
 				string_image += ".";
-			}
-			else if (pixel >= 102 && pixel < 153)
-			{
+				break;
+			case 102:
 				string_image += "+";
-			}
-			else if (pixel >= 153 && pixel < 204)
-			{
+				break;
+			case 153:
 				string_image += "*";
-			}
-			else if (pixel >= 204)
-			{
+				break;
+			case 255:
 				string_image += "#";
+				break;
 			}
 
 		}
 
-		string_image += "\n";
+		string_image += "| \n";
 	}
 
 	std::cout << string_image;

@@ -1,0 +1,6 @@
+﻿  Neuralnetwork.cpp
+D:\Repos\Cpp projects\NN-neural network\NeuralNetwork wbudowany\NeuralNetworkClass\src\Neuralnetwork.cpp(214,2): warning C4267: "inicjowanie": konwersja z "size_t" do "unsigned int", możliwa utrata danych
+D:\Repos\Cpp projects\NN-neural network\NeuralNetwork wbudowany\NeuralNetworkClass\src\Neuralnetwork.cpp(312,55): warning C4267: "inicjowanie": konwersja z "size_t" do "unsigned int", możliwa utrata danych
+D:\Repos\Cpp projects\NN-neural network\NeuralNetwork wbudowany\NeuralNetworkClass\src\Neuralnetwork.cpp(451,50): warning C4267: "inicjowanie": konwersja z "size_t" do "unsigned int", możliwa utrata danych
+D:\Repos\Cpp projects\NN-neural network\NeuralNetwork wbudowany\NeuralNetworkClass\src\Neuralnetwork.cpp(462): warning C4715: "NeuralNetwork::operator[]”: niewszystkie ścieżki kodu zwracają wartość
+  NeuralNetworkClass.vcxproj -> D:\Repos\Cpp projects\NN-neural network\NeuralNetwork wbudowany\NeuralNetworkClass\x64\Debug\NeuralNetworkClass.exe

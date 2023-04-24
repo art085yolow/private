@@ -21,6 +21,8 @@ private:
 	unsigned int m_samplings =0;
 	unsigned int m_correctAnswer;
 	float m_procent_correct_asware=0.0f;
+
+	unsigned char get_filtered_u_char(unsigned char c);
 	
 	
 	// print in console

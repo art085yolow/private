@@ -16,7 +16,7 @@ int main()
     std::cout << "Hello World!\n";
 
     // very small network
-    test2();    
+    // test2();    
    
     // data files mnist
     // 60k handwriten digits
@@ -26,12 +26,13 @@ int main()
 
     // network structure
     int input_size = test_Images.getWidth() * test_Images.getHeight(),    //inputs
-        hidden_layer_size_0 = 22,                                         // h1
-        hidden_layer_size_1 = 20,                                         // h2
+        hidden_layer_size_0 = 28,                                         // h1
+        hidden_layer_size_1 = 14,                                         // h2
+        hidden_layer_size_2 = 10,                                         // h3
         output_size = 10;                                               // outputs
     
     // 784-16-16-10
-    std::string s = std::to_string(input_size) + "-" + std::to_string(hidden_layer_size_0) + "- " + std::to_string(hidden_layer_size_1) + "- " + std::to_string(output_size);
+    std::string s = std::to_string(input_size) + "-" + std::to_string(hidden_layer_size_0) + "- " + std::to_string(hidden_layer_size_1) + "- " + std::to_string(hidden_layer_size_2) + "- " + std::to_string(output_size);
     // creating network
     RNN tested_Network(s);
     
