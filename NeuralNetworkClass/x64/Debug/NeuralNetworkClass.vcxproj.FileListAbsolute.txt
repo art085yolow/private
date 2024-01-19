@@ -1,4 +1,0 @@
-D:\Repos\C++ projects\NN-neural network\NeuralNetwork wbudowany\NeuralNetworkClass\x64\Debug\NeuralNetworkClass.exe
-D:\Repos\C++ projects\NN-neural network\NeuralNetwork wbudowany\NeuralNetworkClass\x64\Debug\NeuralNetworkClass.pdb
-D:\Repos\Cpp projects\NN-neural network\NeuralNetwork wbudowany\NeuralNetworkClass\x64\Debug\NeuralNetworkClass.exe
-D:\Repos\Cpp projects\NN-neural network\NeuralNetwork wbudowany\NeuralNetworkClass\x64\Debug\NeuralNetworkClass.pdb
