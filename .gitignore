@@ -1,2 +1,3 @@
-NeuralNetworkClass/.vs/*
+*/.vs/*
+*/x64/*
 data/*
