@@ -84,7 +84,9 @@ size_t DataStream::getHeight()
 
 void DataStream::shuffle_list()
 {
-	std::random_shuffle(this->m_list_images.begin(), this->m_list_images.end());
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+
+	shuffle(this->m_list_images.begin(), this->m_list_images.end(),std::default_random_engine(seed));
 }
 
 size_t DataStream::sizeList()

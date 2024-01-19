@@ -5,6 +5,8 @@
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
+#include <random>
+#include <chrono>
 
 
 struct Image
